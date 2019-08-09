@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>登录</title>
+    <link rel="stylesheet" href="./../css/reset.css" />
+	<link rel="stylesheet" href="./../css/login.css" />
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+	<script src="./../js/jquery.min.js"></script>
+	<script src="./../js/main.js"></script>
+</head>
+<body class="bj">
+    <div class="login_main">
+        <img src="./../image/科迈爱康图标白.png" class="tb">
+        <div class="panel frist">
+            <label>账号</label>
+            <input id="username" type="text"  maxlength="20" />
+        </div>
+        <div class="panel">
+            <label>密码</label>
+            <input id="password" type="password" maxlength="20" />
+        </div>
+        <div id="login" class="an">
+            <span class="dl">登录</span>
+            <img src="./../image/登录按钮.png" class="an_img">
+            
+        </div> 
+    </div>
+</body>
+<script>
+
+$(function(){
+	$('#login').on('click', function(){
+		var mobile = $('#username').val();
+		var password = $('#password').val();
+		console.log(2111)
+		if(username == ''){
+			alert('请输入用户名！')
+			return
+		}
+		if(password == ''){
+			alert('请输入密码！')
+			return
+		}
+		
+		console.log('jump')
+		$.ajax({
+			url: config.local + '/manager/login',
+			type: 'post',
+			data: {
+				mobile: mobile,
+				password: password
+			},
+			 
+			success: function(response){
+
+				console.log($.cookie('sessionid'))
+				
+				$.cookie('cookie', userSession);
+				// console.log(response.status)
+				if(response.status == 200)
+					{
+						location.href = 'index.html';
+					}
+				else
+					{
+						alert(response.error)
+					}
+			}
+		});
+	});
+});
+</script>
+</html>

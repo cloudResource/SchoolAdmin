@@ -1,0 +1,88 @@
+.bj{
+	background-image: url(./../image/bj.png);
+}
+
+.login_main{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -250px;
+    margin-top: 200px;
+    text-align: center;
+    width: 437px;
+    height: 489px;
+    background-image: url(./../image/登录框.png);
+}
+
+.login_main .tb{
+    display: block;
+    margin: 0px auto;
+    margin-top: 70px;
+}
+
+.login_main .panel.frist{
+	margin-top: 100px;
+}
+
+.login_main .panel{
+	margin-top: 30px;
+	height: 50px;
+	background: #ffffff;
+	border-radius: 25px;
+	-ms-border-radius: 25px;
+	-webkit-border-radius: 25px;
+	-moz-border-radius: 25px;
+	-o-border-radius: 25px;
+}
+
+.login_main .panel label{
+	float: left;
+    margin-left: 50px;
+    font-size: 18px;
+    width: 40px;
+    height: 50px;
+}
+
+.login_main .panel input{
+	margin-left: -20px;
+	border: 0px none;
+	width: 250px;
+	height: 48px;
+	line-height: 40px;
+	background: #F9F9F9;
+	outline: none;
+}
+
+.panel label{
+	padding-top: 10px
+}
+
+
+.an{
+	width: 254px;
+	height: 94px;
+	display: flex;
+    align-items:center;
+}
+
+.dl{
+    font-size: 25px;
+    width: 60px;
+    height: 80px;
+    font-weight: 900;
+    line-height: 50px;
+    color: #ffffff;
+    align-items: center;
+    letter-spacing: 5px;
+	margin: 0px auto;
+	margin-top: 60px;
+	z-index: 550;
+}
+
+.an_img{
+	z-index: 500;
+    position: absolute;
+	margin-top: 30px;
+	border: 0;
+}
+
