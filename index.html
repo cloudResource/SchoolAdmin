@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>学校管理系统</title>
+    <link rel="stylesheet" href="/static/css/reset.css" />
+    <link rel="stylesheet" href="/static/css/index.css" />
+    <script src="/static/js/jquery.min.js"></script>
+	<script src="/static/js/main.js"></script>
+</head>
+<body>
+    <div class="header">
+        <div class="logo animated bounce"></div>
+        <div class="right_all">
+            <span class="right_action animated bounce">
+                <span class="avatar_image">
+                    <img src="/static/image/BiazfanxmamNRoxxVxka.fda3837f.png">
+                </span>
+                <span class="name___POSeq">
+                    欢迎您，gladmin
+                    <!-- <img src="./../image/setting.png"> -->
+                </span>
+                <span id="logout" class="zx">注销</span>
+            </span>
+        </div>
+    </div>
+
+
+
+    <div class="meum_all">
+        <div class="all_list">
+            <ul class="list_1">
+                <li id="teacher" class="ant-menu-item op">
+                    <!-- <a activeclassname="active" href="#/bill"> -->
+                        <!-- <img src="./../image/教师 (1).png" class="list_photo">
+                        <span class="wz">教师管理</span> -->
+                        <img src="/static/image/未标题-1_03.png" class="list_photo" id="p1">
+                    </a>
+                </li>
+                <li id="classroom" class="ant-menu-item op" role="menuitem">
+                    <!-- <a activeclassname="active" href="#/user"> -->
+                        <!-- <img src="./../image/教室 .png" class="list_photo">
+                        <span class="wz">教室管理</span> -->
+                        <img src="/static/image/未标题-1_05.png" class="list_photo" id="p2">
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+
+        <div class="all_data">
+            <table class="tb">
+                <tr class="htr">
+                    <th>教师</th>
+                    <th>教师账号</th>
+                    <th>操作</th>
+                </tr>
+                <!-- <tr class="datatr" id="data-teacher"> -->
+                    <!-- <td>1</td>
+                    <td>2</td>
+                    <td>3</td> -->
+                <!-- </tr> -->
+            </table>
+        </div>
+
+
+
+    </div>
+
+
+
+    <div class="footer">
+        <div class="footer___1YJ3y ant-layout-footer">COPYRIGHT © 科迈爱康 ALL RIGHTS RESERVER 粤ICP备1634509号</div>
+    </div>
+
+
+</body>
+<script>
+
+$(function(){
+    $(window).load(function(){
+        $.ajax({
+
+            type: "GET",
+
+            url: config.local + '/manager/get_teachers',
+
+            dataType: "json",//返回json,text,html你自己定
+
+            success: function(res){//成
+                    if(res.status == 200){
+                        $(".datatr").remove();
+                        
+                        // $.each(res.data,function(i,n){  
+                        //     debugger
+                        //     str+='<tr class="datatr" id="data-teacher">'
+                        //     str+="<td>"+n[i].teacher_name+"</td>";
+                        //     str+="<td>"+n[i].mobile+"</td>";
+                        //     str+="<td>"+n[i].teacher_id+"</td>";
+                        //     str+="</tr>";
+                        //     $(".tb").append(str);  
+                        // });
+
+                        let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
+
+                        for (var i=0; i<correctArray.length; i++) {
+                            let str;
+                            str ="<tr class='datatr' id=" + "'" + correctArray[i].teacher_id + "'" +">"
+                            str +="<td>"+correctArray[i].teacher_name+"</td>";
+                            str +="<td>"+correctArray[i].teacher_mobile+"</td>";
+                            str +="<td><button class='del-data' data-teacherid='" + correctArray[i].teacher_id + "'>删除</button></td>";
+                            str +="</tr>";
+                            $(".tb").append(str);  
+                        }
+
+                    } else if (res.status == 401) {
+                        alert(res.error)
+                        location.href = 'login.html';
+                    } else {
+                        
+                    }
+                            // $('#resText').html(html);
+
+            }
+                    
+        });
+
+    })
+
+    // 退出
+	$('#logout').on('click', function(){
+		console.log(2111)
+		$.ajax({
+			url: config.local + '/manager/logout',
+			type: 'GET',
+			 
+			success: function(response){
+			// console.log(response.status)
+			if(response.status == 200)
+				{
+					location.href = 'login.html';
+				}
+			else
+				{
+					alert(response.error)
+				}
+			}
+		});
+	});
+
+
+    $('#teacher').on('click', function(){
+        $.ajax({
+
+            type: "GET",
+
+            url: config.local + '/manager/get_teachers',
+
+            dataType: "json",//返回json,text,html你自己定
+
+            success: function(res){//成功
+                        // $('#data-teacher').empty();   //清空teacher_data里面的所有内容
+                if(res.status == 200){
+                    $(".datatr").remove();
+                    let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
+
+                    for (var i=0; i<correctArray.length; i++) {
+                        let str;
+                        str ="<tr class='datatr' id=" + "'" + correctArray[i].teacher_id + "'" +">"
+                        str +="<td>"+correctArray[i].teacher_name+"</td>";
+                        str +="<td>"+correctArray[i].teacher_mobile+"</td>";
+                        str +="<td><button class='del-data' data-teacherid='" + correctArray[i].teacher_id + "'>删除</button></td>";
+                        str +="</tr>";
+                        $(".tb").append(str);  
+                    }
+
+                } else if (res.status == 401) {
+                    alert(res.error)
+                    location.href = 'login.html';
+                } else {
+
+                }
+            }
+        })
+    })
+    $('#p1').on('mouseover', function(){
+        $('#p1').attr("src", "/static/image/未标题-1_09.png");
+    })
+    $('#p1').on('mouseout', function(){
+        $('#p1').attr("src", "/static/image/未标题-1_03.png");
+    })
+    $('#p2').on('mouseover', function(){
+        $('#p2').attr("src", "/static/image/未标题-1_10.png");
+    })
+    $('#p2').on('mouseout', function(){
+        $('#p2').attr("src", "/static/image/未标题-1_05.png");
+    })
+
+    $(document).on("click", ".del-data", function(e) {
+        var teacherid = e.currentTarget.dataset.teacherid;
+        $.ajax({
+
+            type: "POST",
+
+            url: config.local + '/manager/del_teacher',
+
+            data:{teacher_id: teacherid},
+
+            dataType: "json",//返回json,text,html你自己定
+
+            success: function(res){//成功
+                if(res.status == 200){
+                    $("#" + teacherid).remove();
+                } else if (res.status == 401) {
+                    alert(res.error)
+                    location.href = 'login.html';
+                } else {
+
+                }
+            }
+        })
+    })
+    // $('#classroom').on('click', function(){
+    //     console.log('GetTeacher')
+
+    //     $.ajax({
+
+    //         type: "GET",
+
+    //         url: config.local + '/manager/get_teachers',
+
+    //         dataType: "json",//返回json,text,html你自己定
+
+    //         success: function(res){//成功
+    //                     // $('#data-teacher').empty();   //清空teacher_data里面的所有内容
+    //             if(res.status == 200){
+    //                 $(".datatr").remove();
+    //                 let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
+
+    //                 for (var i=0; i<correctArray.length; i++) {
+    //                     let str;
+    //                     str ='<tr class="datatr" id="data-teacher">'
+    //                     str +="<td>"+correctArray[i].teacher_name+"</td>";
+    //                     str +="<td>"+correctArray[i].teacher_mobile+"</td>";
+    //                     str +="<td>"+correctArray[i].teacher_id+"</td>";
+    //                     str +="</tr>";
+    //                     $(".tb").append(str);  
+    //                 }
+
+    //             } else if (res.status == 401) {
+    //                 alert(res.error)
+    //                 location.href = 'login.html';
+    //             } else {
+
+    //             }
+    //         }
+    //     })
+    // })
+})
+
+</script>
+</html>

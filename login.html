@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>登录</title>
-    <link rel="stylesheet" href="./../css/reset.css" />
-	<link rel="stylesheet" href="./../css/login.css" />
+    <link rel="stylesheet" href="/static/css/reset.css" />
+	<link rel="stylesheet" href="/static/css/login.css" />
 	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-	<script src="./../js/jquery.min.js"></script>
-	<script src="./../js/main.js"></script>
+	<script src="/static/js/jquery.min.js"></script>
+	<script src="/static/js/main.js"></script>
 </head>
 <body class="bj">
     <div class="login_main">
-        <img src="./../image/科迈爱康图标白.png" class="tb">
+        <img src="/static/image/科迈爱康图标白.png" class="tb">
         <div class="panel frist">
             <label>账号</label>
             <input id="username" type="text"  maxlength="20" />
@@ -24,7 +24,7 @@
         </div>
         <div id="login" class="an">
             <span class="dl">登录</span>
-            <img src="./../image/登录按钮.png" class="an_img">
+            <img src="/static/image/登录按钮.png" class="an_img">
             
         </div> 
     </div>
@@ -50,16 +50,21 @@ $(function(){
 			url: config.local + '/manager/login',
 			type: 'post',
 			data: {
-				mobile: mobile,
-				password: password
+				mobile: '13333333333',
+				password: '11111111'
 			},
+			crossDomain:true,
+			xhrFields: {withCredentials: true},
 			 
 			success: function(response){
+				// debugger
+				// $.cookie('cookieName', null)
 
+				// $.cookie('key1','val1');
+				// $.cookie('key2','val2');
 				console.log($.cookie('sessionid'))
+				// console.log(document.cookie)
 				
-				$.cookie('cookie', userSession);
-				// console.log(response.status)
 				if(response.status == 200)
 					{
 						location.href = 'index.html';
