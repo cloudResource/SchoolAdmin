@@ -57,8 +57,8 @@
                     <img src="/static/image/批量@2x.png" id="add_2">
                 </div>
                 <tr class="htr">
-                    <th>教师</th>
-                    <th>教师账号</th>
+                    <th>年级</th>
+                    <th>班级</th>
                     <th>操作</th>
                 </tr>
                 <!-- <tr class="datatr" id="data-teacher"> -->
@@ -89,14 +89,13 @@ $(function(){
 
             type: "GET",
 
-            url: config.local + '/manager/get_teachers',
+            url: config.local + '/manager/get_classes',
 
-            // dataType: "json",//返回json,text,html你自己定
+            dataType: "json",//返回json,text,html你自己定
 
             success: function(res){//成
                     if(res.status == 200){
                         $(".datatr").remove();
-                        
                         // $.each(res.data,function(i,n){  
                         //     debugger
                         //     str+='<tr class="datatr" id="data-teacher">'
@@ -111,10 +110,10 @@ $(function(){
 
                         for (var i=0; i<correctArray.length; i++) {
                             let str;
-                            str ="<tr class='datatr' id=" + "'" + correctArray[i].teacher_id + "'" +">"
-                            str +="<td>"+correctArray[i].teacher_name+"</td>";
-                            str +="<td>"+correctArray[i].teacher_mobile+"</td>";
-                            str +="<td><button class='del-data' data-teacherid='" + correctArray[i].teacher_id + "'>删除</button></td>";
+                            str ="<tr class='datatr' id=" + "'" + correctArray[i].class_id + "'" +">"
+                            str +="<td>"+correctArray[i].grade_name+"</td>";
+                            str +="<td>"+correctArray[i].class_name+"</td>";
+                            str +="<td><button class='del-data' data-classid='" + correctArray[i].class_id + "'>删除</button></td>";
                             str +="</tr>";
                             $(".tb").append(str);  
                         }
@@ -160,22 +159,21 @@ $(function(){
 
             type: "GET",
 
-            url: config.local + '/manager/get_teachers',
+            url: config.local + '/manager/get_class',
 
             dataType: "json",//返回json,text,html你自己定
 
             success: function(res){//成功
-                        // $('#data-teacher').empty();   //清空teacher_data里面的所有内容
                 if(res.status == 200){
                     $(".datatr").remove();
                     let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
 
                     for (var i=0; i<correctArray.length; i++) {
                         let str;
-                        str ="<tr class='datatr' id=" + "'" + correctArray[i].teacher_id + "'" +">"
-                        str +="<td>"+correctArray[i].teacher_name+"</td>";
-                        str +="<td>"+correctArray[i].teacher_mobile+"</td>";
-                        str +="<td><button class='del-data' data-teacherid='" + correctArray[i].teacher_id + "'>删除</button></td>";
+                        str ="<tr class='datatr' id=" + "'" + correctArray[i].class_id + "'" +">"
+                        str +="<td>"+correctArray[i].grade_name+"</td>";
+                        str +="<td>"+correctArray[i].class_name+"</td>";
+                        str +="<td><button class='del-data' data-classid='" + correctArray[i].class_id + "'>删除</button></td>";
                         str +="</tr>";
                         $(".tb").append(str);  
                     }
@@ -215,20 +213,20 @@ $(function(){
     })
 
     $(document).on("click", ".del-data", function(e) {
-        var teacherid = e.currentTarget.dataset.teacherid;
+        var class_id = e.currentTarget.dataset.classid;
         $.ajax({
 
             type: "POST",
 
-            url: config.local + '/manager/del_teacher',
+            url: config.local + '/manager/del_class',
 
-            data:{teacher_id: teacherid},
+            data:{class_id: class_id},
 
             dataType: "json",//返回json,text,html你自己定
 
             success: function(res){//成功
                 if(res.status == 200){
-                    $("#" + teacherid).remove();
+                    $("#" + class_id).remove();
                 } else if (res.status == 401) {
                     alert(res.error)
                     location.href = 'login.html';
@@ -238,48 +236,13 @@ $(function(){
             }
         })
     })
-    $('#classroom').on('click', function(){
-        location.href = 'class.html';
-    })
+
     $('#teacher').on('click', function(){
         location.href = 'index.html';
     })
-    // $('#classroom').on('click', function(){
-    //     console.log('GetTeacher')
-
-    //     $.ajax({
-
-    //         type: "GET",
-
-    //         url: config.local + '/manager/get_teachers',
-
-    //         dataType: "json",//返回json,text,html你自己定
-
-    //         success: function(res){//成功
-    //                     // $('#data-teacher').empty();   //清空teacher_data里面的所有内容
-    //             if(res.status == 200){
-    //                 $(".datatr").remove();
-    //                 let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
-
-    //                 for (var i=0; i<correctArray.length; i++) {
-    //                     let str;
-    //                     str ='<tr class="datatr" id="data-teacher">'
-    //                     str +="<td>"+correctArray[i].teacher_name+"</td>";
-    //                     str +="<td>"+correctArray[i].teacher_mobile+"</td>";
-    //                     str +="<td>"+correctArray[i].teacher_id+"</td>";
-    //                     str +="</tr>";
-    //                     $(".tb").append(str);  
-    //                 }
-
-    //             } else if (res.status == 401) {
-    //                 alert(res.error)
-    //                 location.href = 'login.html';
-    //             } else {
-                        
-    //             }
-    //         }
-    //     })
-    // })
+    $('#classroom').on('click', function(){
+        location.href = 'class.html';
+    })
 
 })
 

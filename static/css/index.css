@@ -158,6 +158,7 @@
     width: 100%;
     overflow: hidden;
     text-align: center;
+    /* display: inline-block; */
 }
 
 .all_data .htr{
@@ -186,4 +187,9 @@
     text-align: center;
     height: 50px;
     color: #909399;
+}
+
+.add_ img{
+    width: 140px;
+    height: 60px;
 }
