@@ -10,6 +10,8 @@
 	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 	<script src="/static/js/jquery.min.js"></script>
 	<script src="/static/js/main.js"></script>
+	<script type="text/javascript" charset="utf-8" async="" src="/static/js/L2Dwidget.0.min.js"></script>
+    <script src="/static/js/L2Dwidget.min.js"></script>
 </head>
 <body class="bj">
     <div class="login_main">
@@ -26,12 +28,39 @@
             <span class="dl">登录</span>
             <img src="/static/image/登录按钮.png" class="an_img">
             
-        </div> 
-    </div>
+		</div> 
+	</div>
+	
 </body>
 <script>
 
 $(function(){
+	$(window).load(function(){
+
+		// live2d    
+		L2Dwidget.init({
+			"model": {
+		　　　　　　　//jsonpath控制显示那个小萝莉模型，下面这个就是我觉得最可爱的小萝莉模型
+				jsonPath: "https://unpkg.com/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json",
+				"scale": 1
+			},
+			"display": {
+				"position": "left", //看板娘的表现位置
+				"width": 112.5,  //小萝莉的宽度
+				"height": 225, //小萝莉的高度
+				"hOffset": 0,
+				"vOffset": -948
+			},
+			"mobile": {
+				"show": true,
+				"scale": 0.5
+			},
+			"react": {
+				"opacityDefault": 0.7,
+				"opacityOnHover": 0.2
+			}
+		})
+	})
 	$('#login').on('click', function(){
 		var mobile = $('#username').val();
 		var password = $('#password').val();
@@ -47,11 +76,11 @@ $(function(){
 		
 		console.log('jump')
 		$.ajax({
-			url: config.local + '/manager/login',
+			url: config.local + '/manager/v1/login',
 			type: 'post',
 			data: {
-				mobile: '13333333333',
-				password: '11111111'
+				mobile: mobile,
+				password: password,
 			},
 			crossDomain:true,
 			xhrFields: {withCredentials: true},

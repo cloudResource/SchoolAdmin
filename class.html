@@ -8,7 +8,13 @@
     <link rel="stylesheet" href="/static/css/reset.css" />
     <link rel="stylesheet" href="/static/css/index.css" />
     <script src="/static/js/jquery.min.js"></script>
-	<script src="/static/js/main.js"></script>
+    <script src="/static/js/main.js"></script>
+
+    <!-- <script type="text/javascript" charset="utf-8" async="" src="https://eqcn.ajz.miesnfu.com/wp-content/plugins/wp-3d-pony/live2dw/lib/L2Dwidget.0.min.js"></script>
+    <script src="https://eqcn.ajz.miesnfu.com/wp-content/plugins/wp-3d-pony/live2dw/lib/L2Dwidget.min.js"></script> -->
+    <script type="text/javascript" charset="utf-8" async="" src="/static/js/L2Dwidget.0.min.js"></script>
+    <script src="/static/js/L2Dwidget.min.js"></script>
+    
 </head>
 <body>
     <div class="header">
@@ -69,10 +75,7 @@
             </table>
         </div>
 
-
-
     </div>
-
 
 
     <div class="footer">
@@ -85,11 +88,36 @@
 
 $(function(){
     $(window).load(function(){
+
+        // live2d    
+        L2Dwidget.init({
+            "model": {
+    　　　　　　　//jsonpath控制显示那个小萝莉模型，下面这个就是我觉得最可爱的小萝莉模型
+                jsonPath: "https://unpkg.com/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json",
+                "scale": 1
+            },
+            "display": {
+                "position": "left", //看板娘的表现位置
+                "width": 112.5,  //小萝莉的宽度
+                "height": 225, //小萝莉的高度
+                "hOffset": 0,
+                "vOffset": 135,
+            },
+            "mobile": {
+                "show": true,
+                "scale": 0.5
+            },
+            "react": {
+                "opacityDefault": 0.7,
+                "opacityOnHover": 0.2
+            }
+        });
+        
         $.ajax({
 
             type: "GET",
 
-            url: config.local + '/manager/get_classes',
+            url: config.local + '/manager/v1/get_classes',
 
             dataType: "json",//返回json,text,html你自己定
 
@@ -136,7 +164,7 @@ $(function(){
 	$('#logout').on('click', function(){
 		console.log(2111)
 		$.ajax({
-			url: config.local + '/manager/logout',
+			url: config.local + '/manager/v1/logout',
 			type: 'GET',
 			 
 			success: function(response){
@@ -159,7 +187,7 @@ $(function(){
 
             type: "GET",
 
-            url: config.local + '/manager/get_class',
+            url: config.local + '/manager/v1/get_class',
 
             dataType: "json",//返回json,text,html你自己定
 
@@ -218,7 +246,7 @@ $(function(){
 
             type: "POST",
 
-            url: config.local + '/manager/del_class',
+            url: config.local + '/manager/v1/del_class',
 
             data:{class_id: class_id},
 

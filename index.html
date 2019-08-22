@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="/static/css/reset.css" />
     <link rel="stylesheet" href="/static/css/index.css" />
     <script src="/static/js/jquery.min.js"></script>
-	<script src="/static/js/main.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script type="text/javascript" charset="utf-8" async="" src="/static/js/L2Dwidget.0.min.js"></script>
+    <script src="/static/js/L2Dwidget.min.js"></script>
 </head>
 <body>
     <div class="header">
@@ -69,11 +71,24 @@
             </table>
         </div>
 
-
+        <div id="add_teacher">
+            <div id="tittle_1">
+                <p>添加教师</p>
+                <hr />
+            </div>
+            <div class="pop">
+                <p>教师名称:<input id="teacher_name" /></p>
+                <p>教师账号:<input id="mobile_number" /></p>
+            </div>
+                <div id="option">
+                    <div class="button blue-button save">确认</div>
+                    <div class="button blue-button cannel">取消</div>
+                </div>
+        </div>
 
     </div>
 
-
+    <div class="hover"></div>
 
     <div class="footer">
         <div class="footer___1YJ3y ant-layout-footer">COPYRIGHT © 科迈爱康 ALL RIGHTS RESERVER 粤ICP备1634509号</div>
@@ -85,11 +100,37 @@
 
 $(function(){
     $(window).load(function(){
+        // $('body').css('height' , $(window).height());
+
+                // live2d    
+        L2Dwidget.init({
+            "model": {
+    　　　　　　　//jsonpath控制显示那个小萝莉模型，下面这个就是我觉得最可爱的小萝莉模型
+                jsonPath: "https://unpkg.com/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json",
+                "scale": 1
+            },
+            "display": {
+                "position": "left", //看板娘的表现位置
+                "width": 112.5,  //小萝莉的宽度
+                "height": 225, //小萝莉的高度
+                "hOffset": 0,
+                "vOffset": 135,
+            },
+            "mobile": {
+                "show": true,
+                "scale": 0.5
+            },
+            "react": {
+                "opacityDefault": 0.7,
+                "opacityOnHover": 0.2
+            }
+        });
+
         $.ajax({
 
             type: "GET",
 
-            url: config.local + '/manager/get_teachers',
+            url: config.local + '/manager/v1/get_teachers',
 
             // dataType: "json",//返回json,text,html你自己定
 
@@ -137,7 +178,7 @@ $(function(){
 	$('#logout').on('click', function(){
 		console.log(2111)
 		$.ajax({
-			url: config.local + '/manager/logout',
+			url: config.local + '/manager/v1/logout',
 			type: 'GET',
 			 
 			success: function(response){
@@ -160,7 +201,7 @@ $(function(){
 
             type: "GET",
 
-            url: config.local + '/manager/get_teachers',
+            url: config.local + '/manager/v1/get_teachers',
 
             dataType: "json",//返回json,text,html你自己定
 
@@ -220,7 +261,7 @@ $(function(){
 
             type: "POST",
 
-            url: config.local + '/manager/del_teacher',
+            url: config.local + '/manager/v1/del_teacher',
 
             data:{teacher_id: teacherid},
 
@@ -244,42 +285,101 @@ $(function(){
     $('#teacher').on('click', function(){
         location.href = 'index.html';
     })
-    // $('#classroom').on('click', function(){
-    //     console.log('GetTeacher')
 
-    //     $.ajax({
+    $('#add_1').on('click', function(){
+		
+        // Old version
+		// var oLogin = $('<div id="add_teacher">\
+        //                     <p id="tittle_1">添加教师</p>\
+        //                     <p>教师名称:<input type="text" /></p>\
+        //                     <p>教师账号:<input type="text" /></p>\
+        //                     <div id="close">X</div>\
+        //                     <div id="option">\
+        //                         <button>取消</button>\
+        //                         <button>确认</button>\
+        //                     </div>\
+        //                 </div>');
+		
+		// $('body').append( oLogin );
+		
+		$('#add_teacher').css('left' , ($(window).width() - $('#add_teacher').outerWidth())/2 );
+		$('#add_teacher').css('top' , ($(window).height() - $('#add_teacher').outerHeight())/2 );
+		
+		
+		// $('#close').click(function(){
+			
+		// 	oLogin.remove();
+			
+		// });
+		
+		
+		// $(window).on('resize scroll',function(){
+			
+		// 	oLogin.css('left' , ($(window).width() - oLogin.outerWidth())/2 );
+		//     oLogin.css('top' , ($(window).height() - oLogin.outerHeight())/2 + $(window).scrollTop() );
+			
+		// });
 
-    //         type: "GET",
+        // new version
+        $('#add_teacher').css('display', 'block');
+        $('.hover').css('display', 'block');
+		
+	});
+    $('.hover').on('click', function(){
+        $('#add_teacher').css('display', 'none');
+        $('.hover').css('display', 'none');
+    });
+    $('.cannel').on('click', function(){
+        $('#add_teacher').css('display', 'none');
+        $('.hover').css('display', 'none');
+    });
+    $('.save').on('click', function(){
+        console.log('add')
+        var teacherName = $('#teacher_name').val();
+		var mobileNumber = $('#mobile_number').val();
+		console.log(2111)
+		if(teacherName == ''){
+			alert('请输入教师名称！')
+			return
+		}
+		if(mobile_number == ''){
+			alert('请输入教师账号！')
+			return
+		}
+		
+		console.log('jump')
+        $.ajax({
 
-    //         url: config.local + '/manager/get_teachers',
+            type: "post",
 
-    //         dataType: "json",//返回json,text,html你自己定
-
-    //         success: function(res){//成功
-    //                     // $('#data-teacher').empty();   //清空teacher_data里面的所有内容
-    //             if(res.status == 200){
-    //                 $(".datatr").remove();
-    //                 let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
-
-    //                 for (var i=0; i<correctArray.length; i++) {
-    //                     let str;
-    //                     str ='<tr class="datatr" id="data-teacher">'
-    //                     str +="<td>"+correctArray[i].teacher_name+"</td>";
-    //                     str +="<td>"+correctArray[i].teacher_mobile+"</td>";
-    //                     str +="<td>"+correctArray[i].teacher_id+"</td>";
-    //                     str +="</tr>";
-    //                     $(".tb").append(str);  
-    //                 }
-
-    //             } else if (res.status == 401) {
-    //                 alert(res.error)
-    //                 location.href = 'login.html';
-    //             } else {
-                        
-    //             }
-    //         }
-    //     })
-    // })
+            url: config.local + '/manager/v1/add_teacher',
+            data: {
+				"teacher_name": teacherName,
+				"mobile": mobileNumber,
+			},
+            dataType: "json",//返回json,text,html你自己定
+            
+            success: function(res){//成功
+                if(res.status == 200){
+                    let correctArray = res.data
+                    let str
+                    str ="<tr class='datatr' id=" + "'" + correctArray.teacher_id + "'" +">"
+                    str +="<td>"+correctArray.teacher_name+"</td>";
+                    str +="<td>"+correctArray.teacher_mobile+"</td>";
+                    str +="<td><button class='del-data' data-teacherid='" + correctArray.teacher_id + "'>删除</button></td>";
+                    str +="</tr>";
+                    $(".tb").append(str); 
+                    $('#add_teacher').css('display', 'none');
+                    $('.hover').css('display', 'none');
+                } else if (res.status == 401) {
+                    alert(res.error)
+                    location.href = 'login.html';
+                } else {
+                    debugger
+                }
+            }
+        })
+    })
 
 })
 
