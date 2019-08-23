@@ -86,9 +86,23 @@
                 </div>
         </div>
 
+
+        <div id="batch_add">
+            <div id="tittle_1">
+                <p>批量添加</p>
+                <hr />
+            </div>
+            <div class="pop">
+                <span id="upo9" class="yi9">下载Excel模板（教师）</span>
+                <span id="upo3" class="yi9" onclick="">上传Excel文件 </span>
+                <span id="iop1">注：上传的Excel文件为下载后填写的模板，不支持自行编写的Excel</span>
+            </div>
+        </div>
+
     </div>
 
     <div class="hover"></div>
+    <input type='file' class='filebutton' style='display:none' /> <br>
 
     <div class="footer">
         <div class="footer___1YJ3y ant-layout-footer">COPYRIGHT © 科迈爱康 ALL RIGHTS RESERVER 粤ICP备1634509号</div>
@@ -155,7 +169,7 @@ $(function(){
                             str ="<tr class='datatr' id=" + "'" + correctArray[i].teacher_id + "'" +">"
                             str +="<td>"+correctArray[i].teacher_name+"</td>";
                             str +="<td>"+correctArray[i].teacher_mobile+"</td>";
-                            str +="<td><button class='del-data' data-teacherid='" + correctArray[i].teacher_id + "'>删除</button></td>";
+                            str +="<td><div class='del-data' data-teacherid='" + correctArray[i].teacher_id + "'>删除</div></td>";
                             str +="</tr>";
                             $(".tb").append(str);  
                         }
@@ -216,7 +230,7 @@ $(function(){
                         str ="<tr class='datatr' id=" + "'" + correctArray[i].teacher_id + "'" +">"
                         str +="<td>"+correctArray[i].teacher_name+"</td>";
                         str +="<td>"+correctArray[i].teacher_mobile+"</td>";
-                        str +="<td><button class='del-data' data-teacherid='" + correctArray[i].teacher_id + "'>删除</button></td>";
+                        str +="<td><div class='del-data' data-teacherid='" + correctArray[i].teacher_id + "'>删除</div></td>";
                         str +="</tr>";
                         $(".tb").append(str);  
                     }
@@ -325,8 +339,39 @@ $(function(){
         $('.hover').css('display', 'block');
 		
 	});
+
+    $('#add_2').on('click', function(){
+		
+		
+		$('#batch_add').css('left' , ($(window).width() - $('#batch_add').outerWidth())/2 );
+		$('#batch_add').css('top' , ($(window).height() - $('#batch_add').outerHeight())/2 );
+		
+        $('#batch_add').css('display', 'block');
+        $('.hover').css('display', 'block');
+		
+	});
+
+    $('#upo9').on('mouseover', function(){
+        $('#upo9').css('background-color', '#5BB1FB');
+        $('#upo9').css('color', '#FFFFFF');
+    })
+    $('#upo9').on('mouseout', function(){
+        $('#upo9').css('background-color', '#FFFFFF');
+        $('#upo9').css('color', '#666666');
+    })
+    $('#upo3').on('mouseover', function(){
+        $('#upo3').css('background-color', '#5BB1FB');
+        $('#upo3').css('color', '#FFFFFF');
+    })
+    $('#upo3').on('mouseout', function(){
+        $('#upo3').css('background-color', '#FFFFFF');
+        $('#upo3').css('color', '#666666');
+    })
+		
+
     $('.hover').on('click', function(){
         $('#add_teacher').css('display', 'none');
+        $('#batch_add').css('display', 'none');
         $('.hover').css('display', 'none');
     });
     $('.cannel').on('click', function(){
@@ -366,7 +411,7 @@ $(function(){
                     str ="<tr class='datatr' id=" + "'" + correctArray.teacher_id + "'" +">"
                     str +="<td>"+correctArray.teacher_name+"</td>";
                     str +="<td>"+correctArray.teacher_mobile+"</td>";
-                    str +="<td><button class='del-data' data-teacherid='" + correctArray.teacher_id + "'>删除</button></td>";
+                    str +="<td><div class='del-data' data-teacherid='" + correctArray.teacher_id + "'>删除</div></td>";
                     str +="</tr>";
                     $(".tb").append(str); 
                     $('#add_teacher').css('display', 'none');
@@ -380,8 +425,79 @@ $(function(){
             }
         })
     })
+    $('#upo9').on('click', function(){
+        console.log('add')
+        var a = document.createElement("a");          
+        // a.download = 'test';
+        a.href = config.local + '/manager/v1/file_down?file_type=teacher_excel';         
+        a.click();          
+        return;  
+    })
+
+    $('#upo3').on('click', function(){
+        openFileDialog()
+    })
+
+    function startFileUpload(file){
+        var formData = new FormData();
+	    formData.append("excel_file" , file)
+
+        $.ajax({
+            type: "POST",
+            url: config.local + '/manager/v1/add_teacher/batch',
+            // url: 'http://10.0.100.109:9999/manager/v1/add_teacher/batch',
+            data: formData,
+            contentType : false,
+            processData : false,
+            success: function(res){//成功
+                debugger
+                if(res.status == 200){
+                    alert(res.message)
+                    location.reload() 
+                } else if (res.status == 401){
+                    alert(res.error)
+                    location.href = 'login.html';
+                } else {
+                    alert(res.error)
+                }
+            },
+            fail: function(res){
+                console.log(res)
+                alert(res.error)
+            }
+        })
+    }
+
+    function openFileDialog(){
+        $(".filebutton").click();
+    }
+        //选择一个文件时onchange时间被触发
+
+    $('.filebutton').on('change',function(){
+        var fbutton = $(".filebutton")[0];//dom元素
+        //读取文件
+        var reader = new FileReader();
+        // reader.onload = function(e){
+        //     debugger
+        //     var dataURL = e.target.result;//'data:image/jpeg;base64,/9j/4AAQSk...(base64编码)...'   
+        //     //alert(data);
+        //     var htmlImg = "<img src = '" + dataURL + "'/>";
+        //     $(".img").html(htmlImg);
+        // }
+        var file = fbutton.files[0];
+        reader.readAsDataURL(file);
+        debugger
+        startFileUpload(file);
+    })
+    
+    function fileSelected(){
+        
+        	    	
+    }
+    
 
 })
+
 
 </script>
 </html>
