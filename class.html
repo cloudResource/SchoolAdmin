@@ -9,12 +9,8 @@
     <link rel="stylesheet" href="/static/css/index.css" />
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/main.js"></script>
-
-    <!-- <script type="text/javascript" charset="utf-8" async="" src="https://eqcn.ajz.miesnfu.com/wp-content/plugins/wp-3d-pony/live2dw/lib/L2Dwidget.0.min.js"></script>
-    <script src="https://eqcn.ajz.miesnfu.com/wp-content/plugins/wp-3d-pony/live2dw/lib/L2Dwidget.min.js"></script> -->
     <script type="text/javascript" charset="utf-8" async="" src="/static/js/L2Dwidget.0.min.js"></script>
     <script src="/static/js/L2Dwidget.min.js"></script>
-    
 </head>
 <body>
     <div class="header">
@@ -59,7 +55,7 @@
         <div class="all_data">
             <table class="tb">
                 <div class="add_">
-                    <img src="/static/image/添加@2x.png" id="add_1">
+                    <img src="/static/image/添加教室未选中@2x.png" id="add_1">
                     <img src="/static/image/批量@2x.png" id="add_2">
                 </div>
                 <tr class="htr">
@@ -75,8 +71,38 @@
             </table>
         </div>
 
+        <div id="add_teacher">
+            <div id="tittle_1">
+                <p>添加教室</p>
+                <hr />
+            </div>
+            <div class="pop">
+                <p>输入年级:<input id="grade_name" /></p>
+                <p>输入班级:<input id="class_name" /></p>
+            </div>
+                <div id="option">
+                    <div class="button blue-button save">确认</div>
+                    <div class="button blue-button cannel">取消</div>
+                </div>
+        </div>
+
+
+        <div id="batch_add">
+            <div id="tittle_1">
+                <p>批量添加</p>
+                <hr />
+            </div>
+            <div class="pop">
+                <span id="upo9" class="yi9">下载Excel模板（教室）</span>
+                <span id="upo3" class="yi9" onclick="">上传Excel文件 </span>
+                <span id="iop1">注：上传的Excel文件为下载后填写的模板，不支持自行编写的Excel文件</span>
+            </div>
+        </div>
+
     </div>
 
+    <div class="hover"></div>
+    <input type='file' class='filebutton' style='display:none' /> <br>
 
     <div class="footer">
         <div class="footer___1YJ3y ant-layout-footer">COPYRIGHT © 科迈爱康 ALL RIGHTS RESERVER 粤ICP备1634509号</div>
@@ -88,8 +114,9 @@
 
 $(function(){
     $(window).load(function(){
+        // $('body').css('height' , $(window).height());
 
-        // live2d    
+                // live2d    
         L2Dwidget.init({
             "model": {
     　　　　　　　//jsonpath控制显示那个小萝莉模型，下面这个就是我觉得最可爱的小萝莉模型
@@ -112,18 +139,19 @@ $(function(){
                 "opacityOnHover": 0.2
             }
         });
-        
+
         $.ajax({
 
             type: "GET",
 
             url: config.local + '/manager/v1/get_classes',
 
-            dataType: "json",//返回json,text,html你自己定
+            // dataType: "json",//返回json,text,html你自己定
 
             success: function(res){//成
                     if(res.status == 200){
                         $(".datatr").remove();
+                        
                         // $.each(res.data,function(i,n){  
                         //     debugger
                         //     str+='<tr class="datatr" id="data-teacher">'
@@ -141,7 +169,7 @@ $(function(){
                             str ="<tr class='datatr' id=" + "'" + correctArray[i].class_id + "'" +">"
                             str +="<td>"+correctArray[i].grade_name+"</td>";
                             str +="<td>"+correctArray[i].class_name+"</td>";
-                            str +="<td><button class='del-data' data-classid='" + correctArray[i].class_id + "'>删除</button></td>";
+                            str +="<td><div class='del-data' data-classid='" + correctArray[i].class_id + "'>删除</div></td>";
                             str +="</tr>";
                             $(".tb").append(str);  
                         }
@@ -150,7 +178,7 @@ $(function(){
                         alert(res.error)
                         location.href = 'login.html';
                     } else {
-                        
+                        alert(res.error)
                     }
                             // $('#resText').html(html);
 
@@ -181,40 +209,6 @@ $(function(){
 		});
 	});
 
-
-    $('#teacher').on('click', function(){
-        $.ajax({
-
-            type: "GET",
-
-            url: config.local + '/manager/v1/get_class',
-
-            dataType: "json",//返回json,text,html你自己定
-
-            success: function(res){//成功
-                if(res.status == 200){
-                    $(".datatr").remove();
-                    let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
-
-                    for (var i=0; i<correctArray.length; i++) {
-                        let str;
-                        str ="<tr class='datatr' id=" + "'" + correctArray[i].class_id + "'" +">"
-                        str +="<td>"+correctArray[i].grade_name+"</td>";
-                        str +="<td>"+correctArray[i].class_name+"</td>";
-                        str +="<td><button class='del-data' data-classid='" + correctArray[i].class_id + "'>删除</button></td>";
-                        str +="</tr>";
-                        $(".tb").append(str);  
-                    }
-
-                } else if (res.status == 401) {
-                    alert(res.error)
-                    location.href = 'login.html';
-                } else {
-
-                }
-            }
-        })
-    })
     $('#p1').on('mouseover', function(){
         $('#p1').attr("src", "/static/image/未标题-1_09.png");
     })
@@ -228,10 +222,10 @@ $(function(){
         $('#p2').attr("src", "/static/image/未标题-1_05.png");
     })
     $('#add_1').on('mouseover', function(){
-        $('#add_1').attr("src", "/static/image/添加@2x(1).png");
+        $('#add_1').attr("src", "/static/image/添加教室选中@2x.png");
     })
     $('#add_1').on('mouseout', function(){
-        $('#add_1').attr("src", "/static/image/添加@2x.png");
+        $('#add_1').attr("src", "/static/image/添加教室未选中@2x.png");
     })
     $('#add_2').on('mouseover', function(){
         $('#add_2').attr("src", "/static/image/教师 (1)@2x(1).png");
@@ -264,15 +258,208 @@ $(function(){
             }
         })
     })
-
-    $('#teacher').on('click', function(){
-        location.href = 'index.html';
-    })
     $('#classroom').on('click', function(){
         location.href = 'class.html';
     })
+    $('#teacher').on('click', function(){
+        location.href = 'index.html';
+    })
+
+    $('#add_1').on('click', function(){
+		
+        // Old version
+		// var oLogin = $('<div id="add_teacher">\
+        //                     <p id="tittle_1">添加教师</p>\
+        //                     <p>教师名称:<input type="text" /></p>\
+        //                     <p>教师账号:<input type="text" /></p>\
+        //                     <div id="close">X</div>\
+        //                     <div id="option">\
+        //                         <button>取消</button>\
+        //                         <button>确认</button>\
+        //                     </div>\
+        //                 </div>');
+		
+		// $('body').append( oLogin );
+		
+		$('#add_teacher').css('left' , ($(window).width() - $('#add_teacher').outerWidth())/2 );
+		$('#add_teacher').css('top' , ($(window).height() - $('#add_teacher').outerHeight())/2 );
+		
+		
+		// $('#close').click(function(){
+			
+		// 	oLogin.remove();
+			
+		// });
+		
+		
+		// $(window).on('resize scroll',function(){
+			
+		// 	oLogin.css('left' , ($(window).width() - oLogin.outerWidth())/2 );
+		//     oLogin.css('top' , ($(window).height() - oLogin.outerHeight())/2 + $(window).scrollTop() );
+			
+		// });
+
+        // new version
+        $('#add_teacher').css('display', 'block');
+        $('.hover').css('display', 'block');
+		
+	});
+
+    $('#add_2').on('click', function(){
+		
+		
+		$('#batch_add').css('left' , ($(window).width() - $('#batch_add').outerWidth())/2 );
+		$('#batch_add').css('top' , ($(window).height() - $('#batch_add').outerHeight())/2 );
+		
+        $('#batch_add').css('display', 'block');
+        $('.hover').css('display', 'block');
+		
+	});
+
+    $('#upo9').on('mouseover', function(){
+        $('#upo9').css('background-color', '#5BB1FB');
+        $('#upo9').css('color', '#FFFFFF');
+    })
+    $('#upo9').on('mouseout', function(){
+        $('#upo9').css('background-color', '#FFFFFF');
+        $('#upo9').css('color', '#666666');
+    })
+    $('#upo3').on('mouseover', function(){
+        $('#upo3').css('background-color', '#5BB1FB');
+        $('#upo3').css('color', '#FFFFFF');
+    })
+    $('#upo3').on('mouseout', function(){
+        $('#upo3').css('background-color', '#FFFFFF');
+        $('#upo3').css('color', '#666666');
+    })
+		
+
+    $('.hover').on('click', function(){
+        $('#add_teacher').css('display', 'none');
+        $('#batch_add').css('display', 'none');
+        $('.hover').css('display', 'none');
+    });
+    $('.cannel').on('click', function(){
+        $('#add_teacher').css('display', 'none');
+        $('.hover').css('display', 'none');
+    });
+    $('.save').on('click', function(){
+        console.log('add')
+        var gradeName = $('#grade_name').val();
+		var className = $('#class_name').val();
+		console.log(2111)
+		if(gradeName == ''){
+			alert('请输入年级！')
+			return
+		}
+		if(className == ''){
+			alert('请输入班级！')
+			return
+		}
+		
+		console.log('jump')
+        $.ajax({
+
+            type: "post",
+
+            url: config.local + '/manager/v1/add_class',
+            data: {
+				"grade_name": gradeName,
+				"class_name": className,
+			},
+            dataType: "json",//返回json,text,html你自己定
+            
+            success: function(res){//成功
+                if(res.status == 200){
+                    let correctArray = res.data
+                    let str
+                    str ="<tr class='datatr' id=" + "'" + correctArray.class_id + "'" +">"
+                    str +="<td>"+correctArray.grade_name+"</td>";
+                    str +="<td>"+correctArray.class_name+"</td>";
+                    str +="<td><div class='del-data' data-teacherid='" + correctArray.class_id + "'>删除</div></td>";
+                    str +="</tr>";
+                    $(".tb").append(str); 
+                    $('#add_teacher').css('display', 'none');
+                    $('.hover').css('display', 'none');
+                } else if (res.status == 401) {
+                    alert(res.error)
+                    location.href = 'login.html';
+                } else {
+                    alert(res.error)
+                }
+            }
+        })
+    })
+    $('#upo9').on('click', function(){
+        console.log('add')
+        var a = document.createElement("a");          
+        // a.download = 'test';
+        a.href = config.local + '/manager/v1/file_down?file_type=class_excel';         
+        a.click();          
+        return;  
+    })
+
+    $('#upo3').on('click', function(){
+        openFileDialog()
+    })
+
+    function startFileUpload(file){
+        var formData = new FormData();
+	    formData.append("excel_file" , file)
+
+        $.ajax({
+            type: "POST",
+            url: config.local + '/manager/v1/add_class/batch',
+            data: formData,
+            contentType : false,
+            processData : false,
+            success: function(res){//成功
+                if(res.status == 200){
+                    alert(res.message)
+                    location.reload() 
+                } else if (res.status == 401){
+                    alert(res.error)
+                    location.href = 'login.html';
+                } else {
+                    alert(res.error)
+                }
+            },
+            fail: function(res){
+                console.log(res)
+                alert(res.error)
+            }
+        })
+    }
+
+    function openFileDialog(){
+        $(".filebutton").click();
+    }
+        //选择一个文件时onchange时间被触发
+
+    $('.filebutton').on('change',function(){
+        var fbutton = $(".filebutton")[0];//dom元素
+        //读取文件
+        var reader = new FileReader();
+        // reader.onload = function(e){
+        //     debugger
+        //     var dataURL = e.target.result;//'data:image/jpeg;base64,/9j/4AAQSk...(base64编码)...'   
+        //     //alert(data);
+        //     var htmlImg = "<img src = '" + dataURL + "'/>";
+        //     $(".img").html(htmlImg);
+        // }
+        var file = fbutton.files[0];
+        reader.readAsDataURL(file);
+        startFileUpload(file);
+    })
+    
+    function fileSelected(){
+        
+        	    	
+    }
+    
 
 })
+
 
 </script>
 </html>

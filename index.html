@@ -95,7 +95,7 @@
             <div class="pop">
                 <span id="upo9" class="yi9">下载Excel模板（教师）</span>
                 <span id="upo3" class="yi9" onclick="">上传Excel文件 </span>
-                <span id="iop1">注：上传的Excel文件为下载后填写的模板，不支持自行编写的Excel</span>
+                <span id="iop1">注：上传的Excel文件为下载后填写的模板，不支持自行编写的Excel文件</span>
             </div>
         </div>
 
@@ -178,7 +178,7 @@ $(function(){
                         alert(res.error)
                         location.href = 'login.html';
                     } else {
-                        
+                        alert(res.error)
                     }
                             // $('#resText').html(html);
 
@@ -209,41 +209,6 @@ $(function(){
 		});
 	});
 
-
-    $('#teacher').on('click', function(){
-        $.ajax({
-
-            type: "GET",
-
-            url: config.local + '/manager/v1/get_teachers',
-
-            dataType: "json",//返回json,text,html你自己定
-
-            success: function(res){//成功
-                        // $('#data-teacher').empty();   //清空teacher_data里面的所有内容
-                if(res.status == 200){
-                    $(".datatr").remove();
-                    let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
-
-                    for (var i=0; i<correctArray.length; i++) {
-                        let str;
-                        str ="<tr class='datatr' id=" + "'" + correctArray[i].teacher_id + "'" +">"
-                        str +="<td>"+correctArray[i].teacher_name+"</td>";
-                        str +="<td>"+correctArray[i].teacher_mobile+"</td>";
-                        str +="<td><div class='del-data' data-teacherid='" + correctArray[i].teacher_id + "'>删除</div></td>";
-                        str +="</tr>";
-                        $(".tb").append(str);  
-                    }
-
-                } else if (res.status == 401) {
-                    alert(res.error)
-                    location.href = 'login.html';
-                } else {
-
-                }
-            }
-        })
-    })
     $('#p1').on('mouseover', function(){
         $('#p1').attr("src", "/static/image/未标题-1_09.png");
     })
@@ -420,7 +385,7 @@ $(function(){
                     alert(res.error)
                     location.href = 'login.html';
                 } else {
-                    debugger
+                    alert(res.error)
                 }
             }
         })
@@ -450,7 +415,6 @@ $(function(){
             contentType : false,
             processData : false,
             success: function(res){//成功
-                debugger
                 if(res.status == 200){
                     alert(res.message)
                     location.reload() 
@@ -486,7 +450,6 @@ $(function(){
         // }
         var file = fbutton.files[0];
         reader.readAsDataURL(file);
-        debugger
         startFileUpload(file);
     })
     
