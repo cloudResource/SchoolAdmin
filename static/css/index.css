@@ -334,3 +334,11 @@
 #upo3 {
     cursor: pointer;
 }
+
+.bd {
+    width: 75px;
+}
+
+.bd:hover{
+    width: 75px;
+}

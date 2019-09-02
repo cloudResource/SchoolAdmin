@@ -86,7 +86,6 @@ $(function(){
 			xhrFields: {withCredentials: true},
 			 
 			success: function(response){
-				// debugger
 				// $.cookie('cookieName', null)
 
 				// $.cookie('key1','val1');
@@ -101,6 +100,7 @@ $(function(){
 				else
 					{
 						alert(response.error)
+						location.href = 'login.html';
 					}
 			}
 		});

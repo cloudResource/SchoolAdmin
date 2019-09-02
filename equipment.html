@@ -61,14 +61,9 @@
 
         <div class="all_data">
             <table class="tb">
-                <div class="add_">
-                    <img src="/static/image/添加教室未选中@2x.png" id="add_1">
-                    <img src="/static/image/批量@2x.png" id="add_2">
-                </div>
                 <tr class="htr">
-                    <th>年级</th>
-                    <th>班级</th>
-                    <th>绑定设备</th>
+                    <th>设备MAC地址</th>
+                    <th>连接教室</th>
                     <th>操作</th>
                 </tr>
                 <!-- <tr class="datatr" id="data-teacher"> -->
@@ -152,7 +147,7 @@ $(function(){
 
             type: "GET",
 
-            url: config.local + '/manager/v1/get_classes',
+            url: config.local + '/manager/v1/get_equipments',
 
             // dataType: "json",//返回json,text,html你自己定
 
@@ -174,15 +169,18 @@ $(function(){
 
                         for (var i=0; i<correctArray.length; i++) {
                             let str;
-                            if(correctArray[i].equipment_data.mac_address == undefined){
-                                correctArray[i].equipment_data.mac_address = ''
+                            let bd_1
+                            if(correctArray[i].class_data.class == undefined){
+                                correctArray[i].class_data.class = '',
+                                bd_1 = "绑定教室"
                             }
-
-                            str ="<tr class='datatr' id=" + "'" + correctArray[i].class_id + "'" +">"
-                            str +="<td>"+correctArray[i].grade_name+"</td>";
-                            str +="<td>"+correctArray[i].class_name+"</td>";
-                            str +="<td>"+correctArray[i].equipment_data.mac_address+"</td>";
-                            str +="<td><div class='del-data' data-classid='" + correctArray[i].class_id + "'>删除</div></td>";
+                            else{
+                                bd_1 = "解绑教室"
+                            }
+                            str ="<tr class='datatr' id=" + "'" + correctArray[i].equipment_id + "'" +">"
+                            str +="<td>"+correctArray[i].mac_address+"</td>";
+                            str +="<td>"+correctArray[i].class_data.class+"</td>";
+                            str +="<td><div class='del-data bd' data-classid='" + correctArray[i].equipment_id + "'>" + bd_1 + "</div></td>";
                             str +="</tr>";
                             $(".tb").append(str);  
                         }
@@ -398,8 +396,7 @@ $(function(){
                     str ="<tr class='datatr' id=" + "'" + correctArray.class_id + "'" +">"
                     str +="<td>"+correctArray.grade_name+"</td>";
                     str +="<td>"+correctArray.class_name+"</td>";
-                    str +="<td></td>";
-                    str +="<td><div class='del-data' data-teacherid='" + correctArray.class_id + "'>删除</div></td>";
+                    str +="<td><div class='del-data bd' data-classid='" + correctArray[i].equipment_id + "'>绑定教室</div></td>";
                     str +="</tr>";
                     $(".tb").append(str); 
                     $('#add_teacher').css('display', 'none');
