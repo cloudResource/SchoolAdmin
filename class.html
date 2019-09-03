@@ -52,7 +52,7 @@
                     <!-- <a activeclassname="active" href="#/user"> -->
                         <!-- <img src="./../image/教室 .png" class="list_photo">
                         <span class="wz">教室管理</span> -->
-                        <img src="/static/image/js1 (2).png" class="list_photo" id="p3">
+                        <img src="/static/image/设备管理2.png" class="list_photo" id="p3">
                     </a>
                 </li>
             </ul>
@@ -88,10 +88,21 @@
                 <p>输入年级:<input id="grade_name" /></p>
                 <p>输入班级:<input id="class_name" /></p>
             </div>
-                <div id="option">
-                    <div class="button blue-button save">确认</div>
-                    <div class="button blue-button cannel">取消</div>
-                </div>
+            <div id="option">
+                <div class="button blue-button save">确认</div>
+                <div class="button blue-button cannel">取消</div>
+            </div>
+        </div>
+
+        <div class="del_window">
+            <div id="tittle_1">
+                <p>确认要删除吗？</p>
+            </div>
+            <p></p>
+            <div id="option">
+                <div class="button blue-button delSave">确认</div>
+                <div class="button blue-button cannel">取消</div>
+            </div>
         </div>
 
 
@@ -122,6 +133,7 @@
 
 $(function(){
     $(window).load(function(){
+        var currentClassId
         // $('body').css('height' , $(window).height());
 
                 // live2d    
@@ -167,23 +179,28 @@ $(function(){
                         //     str+="<td>"+n[i].mobile+"</td>";
                         //     str+="<td>"+n[i].teacher_id+"</td>";
                         //     str+="</tr>";
-                        //     $(".tb").append(str);  
+                        //     $(".tb").append(str);
                         // });
 
                         let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
 
                         for (var i=0; i<correctArray.length; i++) {
                             let str;
+                            let bd_1
                             if(correctArray[i].equipment_data.mac_address == undefined){
-                                correctArray[i].equipment_data.mac_address = ''
+                                correctArray[i].equipment_data.mac_address = '',
+                                bd_1 = "绑定设备"
                             }
-
+                            else{
+                                bd_1 = "解绑设备"
+                            }
                             str ="<tr class='datatr' id=" + "'" + correctArray[i].class_id + "'" +">"
                             str +="<td>"+correctArray[i].grade_name+"</td>";
                             str +="<td>"+correctArray[i].class_name+"</td>";
                             str +="<td>"+correctArray[i].equipment_data.mac_address+"</td>";
-                            str +="<td><div class='del-data' data-classid='" + correctArray[i].class_id + "'>删除</div></td>";
-                            str +="</tr>";
+                            str +="<td><div class='del-data bd' id='bdBtn" + (i+1) +"' >" + bd_1 + "</div>";
+                            str +="<div class='del-data delBtn' id='delBtn" + (i+1) + "' data-classid='" + correctArray[i].class_id + "'>删除</div>";
+                            str +="</td></tr>";
                             $(".tb").append(str);  
                         }
 
@@ -193,13 +210,19 @@ $(function(){
                     } else {
                         alert(res.error)
                     }
-                            // $('#resText').html(html);
 
             }
                     
         });
 
     })
+
+    // $(document).on("mouseover", ".delBtn", function(e) {
+    //     let currentId = e.currentTarget.id
+    //     console.log(currentId)
+
+    //     $("#" + currentId).css('display', 'block')
+    // })
 
     // 退出
 	$('#logout').on('click', function(){
@@ -235,10 +258,10 @@ $(function(){
         $('#p2').attr("src", "/static/image/未标题-1_05.png");
     })
     $('#p3').on('mouseover', function(){
-        $('#p3').attr("src", "/static/image/js1 (1).png");
+        $('#p3').attr("src", "/static/image/设备管理1.png");
     })
     $('#p3').on('mouseout', function(){
-        $('#p3').attr("src", "/static/image/js1 (2).png");
+        $('#p3').attr("src", "/static/image/设备管理2.png");
     })
     $('#add_1').on('mouseover', function(){
         $('#add_1').attr("src", "/static/image/添加教室选中@2x.png");
@@ -252,31 +275,31 @@ $(function(){
     $('#add_2').on('mouseout', function(){
         $('#add_2').attr("src", "/static/image/批量@2x.png");
     })
+    
+    // $(document).on("click", ".del-data", function(e) {
+    //     var class_id = e.currentTarget.dataset.classid;
+    //     $.ajax({
 
-    $(document).on("click", ".del-data", function(e) {
-        var class_id = e.currentTarget.dataset.classid;
-        $.ajax({
+    //         type: "POST",
 
-            type: "POST",
+    //         url: config.local + '/manager/v1/del_class',
 
-            url: config.local + '/manager/v1/del_class',
+    //         data:{class_id: class_id},
 
-            data:{class_id: class_id},
+    //         dataType: "json",//返回json,text,html你自己定
 
-            dataType: "json",//返回json,text,html你自己定
-
-            success: function(res){//成功
-                if(res.status == 200){
-                    $("#" + class_id).remove();
-                } else if (res.status == 401) {
-                    alert(res.error)
-                    location.href = 'login.html';
-                } else {
-                    alert(res.error)
-                }
-            }
-        })
-    })
+    //         success: function(res){//成功
+    //             if(res.status == 200){
+    //                 $("#" + class_id).remove();
+    //             } else if (res.status == 401) {
+    //                 alert(res.error)
+    //                 location.href = 'login.html';
+    //             } else {
+    //                 alert(res.error)
+    //             }
+    //         }
+    //     })
+    // })
     $('#classroom').on('click', function(){
         location.href = 'class.html';
     })
@@ -338,6 +361,16 @@ $(function(){
 		
 	});
 
+    $(document).on("click", ".delBtn", function() {
+		
+		$('.del_window').css('left' , ($(window).width() - $('#batch_add').outerWidth())/2 );
+		$('.del_window').css('top' , ($(window).height() - $('#batch_add').outerHeight())/1.5 );
+		
+        $('.del_window').css('display', 'block');
+        $('.hover').css('display', 'block');
+		
+	});
+
     $('#upo9').on('mouseover', function(){
         $('#upo9').css('background-color', '#5BB1FB');
         $('#upo9').css('color', '#FFFFFF');
@@ -354,15 +387,16 @@ $(function(){
         $('#upo3').css('background-color', '#FFFFFF');
         $('#upo3').css('color', '#666666');
     })
-		
 
     $('.hover').on('click', function(){
         $('#add_teacher').css('display', 'none');
+        $('.del_window').css('display', 'none');
         $('#batch_add').css('display', 'none');
         $('.hover').css('display', 'none');
     });
     $('.cannel').on('click', function(){
         $('#add_teacher').css('display', 'none');
+        $('.del_window').css('display', 'none');
         $('.hover').css('display', 'none');
     });
     $('.save').on('click', function(){

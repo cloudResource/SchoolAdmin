@@ -323,6 +323,11 @@
     color: rgb(255, 255, 255);
 }
 
+#option .delSave{
+    background-color: #5BB1FB;
+    color: rgb(255, 255, 255);
+}
+
 #option .cannel{
     color: #5BB1FB;
 }
@@ -341,4 +346,16 @@
 
 .bd:hover{
     width: 75px;
+}
+
+.del_window{
+    left:33%;
+    top: 30%; 
+    width:700px; 
+    height:260px; 
+    position:fixed;
+    background-color: white;
+    display: none;
+    z-index: 9999;
+    text-align: center;
 }
