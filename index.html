@@ -22,7 +22,6 @@
                 </span>
                 <span class="name___POSeq">
                     欢迎您，gladmin
-                    <!-- <img src="./../image/setting.png"> -->
                 </span>
                 <span id="logout" class="zx">注销</span>
             </span>
@@ -35,25 +34,13 @@
         <div class="all_list">
             <ul class="list_1">
                 <li id="teacher" class="ant-menu-item op">
-                    <!-- <a activeclassname="active" href="#/bill"> -->
-                        <!-- <img src="./../image/教师 (1).png" class="list_photo">
-                        <span class="wz">教师管理</span> -->
-                        <img src="/static/image/未标题-1_03.png" class="list_photo" id="p1">
-                    </a>
+                    <img src="/static/image/未标题-1_03.png" class="list_photo" id="p1">
                 </li>
                 <li id="classroom" class="ant-menu-item op" role="menuitem">
-                    <!-- <a activeclassname="active" href="#/user"> -->
-                        <!-- <img src="./../image/教室 .png" class="list_photo">
-                        <span class="wz">教室管理</span> -->
-                        <img src="/static/image/未标题-1_05.png" class="list_photo" id="p2">
-                    </a>
+                    <img src="/static/image/未标题-1_05.png" class="list_photo" id="p2">
                 </li>
                 <li id="equipment" class="ant-menu-item op" role="menuitem">
-                    <!-- <a activeclassname="active" href="#/user"> -->
-                        <!-- <img src="./../image/教室 .png" class="list_photo">
-                        <span class="wz">教室管理</span> -->
-                        <img src="/static/image/设备管理2.png" class="list_photo" id="p3">
-                    </a>
+                    <img src="/static/image/设备管理2.png" class="list_photo" id="p3">
                 </li>
             </ul>
         </div>
@@ -70,11 +57,6 @@
                     <th>教师账号</th>
                     <th>操作</th>
                 </tr>
-                <!-- <tr class="datatr" id="data-teacher"> -->
-                    <!-- <td>1</td>
-                    <td>2</td>
-                    <td>3</td> -->
-                <!-- </tr> -->
             </table>
         </div>
 
@@ -93,6 +75,16 @@
                 </div>
         </div>
 
+        <div class="del_window">
+            <div id="tittle_1">
+                <p>确认要删除吗？</p>
+            </div>
+            <p></p>
+            <div id="option">
+                <div class="button blue-button delSave">确认</div>
+                <div class="button blue-button cannel">取消</div>
+            </div>
+        </div>
 
         <div id="batch_add">
             <div id="tittle_1">
@@ -120,6 +112,7 @@
 <script>
 
 $(function(){
+    var currentTeacherId
     $(window).load(function(){
         // $('body').css('height' , $(window).height());
 
@@ -176,7 +169,7 @@ $(function(){
                             str ="<tr class='datatr' id=" + "'" + correctArray[i].teacher_id + "'" +">"
                             str +="<td>"+correctArray[i].teacher_name+"</td>";
                             str +="<td>"+correctArray[i].teacher_mobile+"</td>";
-                            str +="<td><div class='del-data' data-teacherid='" + correctArray[i].teacher_id + "'>删除</div></td>";
+                            str +="<td><div class='del-data delBtn' data-teacherid='" + correctArray[i].teacher_id + "'>删除</div></td>";
                             str +="</tr>";
                             $(".tb").append(str);  
                         }
@@ -246,21 +239,21 @@ $(function(){
         $('#add_2').attr("src", "/static/image/批量@2x.png");
     })
 
-    $(document).on("click", ".del-data", function(e) {
-        var teacherid = e.currentTarget.dataset.teacherid;
+    $(document).on("click", ".delSave", function(e) {
         $.ajax({
 
             type: "POST",
 
             url: config.local + '/manager/v1/del_teacher',
 
-            data:{teacher_id: teacherid},
+            data:{teacher_id: currentTeacherId},
 
             dataType: "json",//返回json,text,html你自己定
 
             success: function(res){//成功
                 if(res.status == 200){
-                    $("#" + teacherid).remove();
+                    // $("#" + currentTeacherId).remove();
+                    location.href = 'index.html';
                 } else if (res.status == 401) {
                     alert(res.error)
                     location.href = 'login.html';
@@ -331,6 +324,15 @@ $(function(){
 		
 	});
 
+    $(document).on("click", ".delBtn", function(e) {
+		currentTeacherId = e.currentTarget.dataset.teacherid;
+		$('.del_window').css('left' , ($(window).width() - $('#batch_add').outerWidth())/2 );
+		$('.del_window').css('top' , ($(window).height() - $('#batch_add').outerHeight())/1.5 );
+        $('.del_window').css('display', 'block');
+        $('.hover').css('display', 'block');
+		
+	});
+
     $('#upo9').on('mouseover', function(){
         $('#upo9').css('background-color', '#5BB1FB');
         $('#upo9').css('color', '#FFFFFF');
@@ -352,10 +354,12 @@ $(function(){
     $('.hover').on('click', function(){
         $('#add_teacher').css('display', 'none');
         $('#batch_add').css('display', 'none');
+        $('.del_window').css('display', 'none');
         $('.hover').css('display', 'none');
     });
     $('.cannel').on('click', function(){
         $('#add_teacher').css('display', 'none');
+        $('.del_window').css('display', 'none');
         $('.hover').css('display', 'none');
     });
     $('.save').on('click', function(){
@@ -386,16 +390,17 @@ $(function(){
             
             success: function(res){//成功
                 if(res.status == 200){
-                    let correctArray = res.data
-                    let str
-                    str ="<tr class='datatr' id=" + "'" + correctArray.teacher_id + "'" +">"
-                    str +="<td>"+correctArray.teacher_name+"</td>";
-                    str +="<td>"+correctArray.teacher_mobile+"</td>";
-                    str +="<td><div class='del-data' data-teacherid='" + correctArray.teacher_id + "'>删除</div></td>";
-                    str +="</tr>";
-                    $(".tb").append(str); 
-                    $('#add_teacher').css('display', 'none');
-                    $('.hover').css('display', 'none');
+                    // let correctArray = res.data
+                    // let str
+                    // str ="<tr class='datatr' id=" + "'" + correctArray.teacher_id + "'" +">"
+                    // str +="<td>"+correctArray.teacher_name+"</td>";
+                    // str +="<td>"+correctArray.teacher_mobile+"</td>";
+                    // str +="<td><div class='del-data' data-teacherid='" + correctArray.teacher_id + "'>删除</div></td>";
+                    // str +="</tr>";
+                    // $(".tb").append(str); 
+                    // $('#add_teacher').css('display', 'none');
+                    // $('.hover').css('display', 'none');
+                    location.href = 'index.html';
                 } else if (res.status == 401) {
                     alert(res.error)
                     location.href = 'login.html';

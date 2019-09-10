@@ -22,7 +22,6 @@
                 </span>
                 <span class="name___POSeq">
                     欢迎您，gladmin
-                    <!-- <img src="./../image/setting.png"> -->
                 </span>
                 <span id="logout" class="zx">注销</span>
             </span>
@@ -35,25 +34,13 @@
         <div class="all_list">
             <ul class="list_1">
                 <li id="teacher" class="ant-menu-item op">
-                    <!-- <a activeclassname="active" href="#/bill"> -->
-                        <!-- <img src="./../image/教师 (1).png" class="list_photo">
-                        <span class="wz">教师管理</span> -->
-                        <img src="/static/image/未标题-1_03.png" class="list_photo" id="p1">
-                    </a>
+                    <img src="/static/image/未标题-1_03.png" class="list_photo" id="p1">
                 </li>
                 <li id="classroom" class="ant-menu-item op" role="menuitem">
-                    <!-- <a activeclassname="active" href="#/user"> -->
-                        <!-- <img src="./../image/教室 .png" class="list_photo">
-                        <span class="wz">教室管理</span> -->
-                        <img src="/static/image/未标题-1_05.png" class="list_photo" id="p2">
-                    </a>
+                    <img src="/static/image/未标题-1_05.png" class="list_photo" id="p2">
                 </li>
                 <li id="equipment" class="ant-menu-item op" role="menuitem">
-                    <!-- <a activeclassname="active" href="#/user"> -->
-                        <!-- <img src="./../image/教室 .png" class="list_photo">
-                        <span class="wz">教室管理</span> -->
-                        <img src="/static/image/设备管理2.png" class="list_photo" id="p3">
-                    </a>
+                    <img src="/static/image/设备管理2.png" class="list_photo" id="p3">
                 </li>
             </ul>
         </div>
@@ -71,11 +58,6 @@
                     <th>绑定设备</th>
                     <th>操作</th>
                 </tr>
-                <!-- <tr class="datatr" id="data-teacher"> -->
-                    <!-- <td>1</td>
-                    <td>2</td>
-                    <td>3</td> -->
-                <!-- </tr> -->
             </table>
         </div>
 
@@ -132,8 +114,9 @@
 <script>
 
 $(function(){
+    var currentClassId
     $(window).load(function(){
-        var currentClassId
+        // var currentClassId
         // $('body').css('height' , $(window).height());
 
                 // live2d    
@@ -276,30 +259,31 @@ $(function(){
         $('#add_2').attr("src", "/static/image/批量@2x.png");
     })
     
-    // $(document).on("click", ".del-data", function(e) {
-    //     var class_id = e.currentTarget.dataset.classid;
-    //     $.ajax({
+    $(document).on("click", ".delSave", function() {
+        $.ajax({
 
-    //         type: "POST",
+            type: "POST",
 
-    //         url: config.local + '/manager/v1/del_class',
+            url: config.local + '/manager/v1/del_class',
 
-    //         data:{class_id: class_id},
+            data:{class_id: currentClassId},
 
-    //         dataType: "json",//返回json,text,html你自己定
+            dataType: "json",//返回json,text,html你自己定
 
-    //         success: function(res){//成功
-    //             if(res.status == 200){
-    //                 $("#" + class_id).remove();
-    //             } else if (res.status == 401) {
-    //                 alert(res.error)
-    //                 location.href = 'login.html';
-    //             } else {
-    //                 alert(res.error)
-    //             }
-    //         }
-    //     })
-    // })
+            success: function(res){//成功
+                if(res.status == 200){
+                    $('.del_window').css('display', 'none');
+                    $('.hover').css('display', 'none');
+                    $("#" + currentClassId).remove();
+                } else if (res.status == 401) {
+                    alert(res.error)
+                    location.href = 'login.html';
+                } else {
+                    alert(res.error)
+                }
+            }
+        })
+    })
     $('#classroom').on('click', function(){
         location.href = 'class.html';
     })
@@ -351,8 +335,6 @@ $(function(){
 	});
 
     $('#add_2').on('click', function(){
-		
-		
 		$('#batch_add').css('left' , ($(window).width() - $('#batch_add').outerWidth())/2 );
 		$('#batch_add').css('top' , ($(window).height() - $('#batch_add').outerHeight())/2 );
 		
@@ -361,15 +343,16 @@ $(function(){
 		
 	});
 
-    $(document).on("click", ".delBtn", function() {
-		
+    $(document).on("click", ".delBtn", function(e) {
+		currentClassId = e.currentTarget.dataset.classid;
 		$('.del_window').css('left' , ($(window).width() - $('#batch_add').outerWidth())/2 );
 		$('.del_window').css('top' , ($(window).height() - $('#batch_add').outerHeight())/1.5 );
-		
         $('.del_window').css('display', 'block');
         $('.hover').css('display', 'block');
 		
 	});
+
+
 
     $('#upo9').on('mouseover', function(){
         $('#upo9').css('background-color', '#5BB1FB');
@@ -427,17 +410,18 @@ $(function(){
             
             success: function(res){//成功
                 if(res.status == 200){
-                    let correctArray = res.data
-                    let str
-                    str ="<tr class='datatr' id=" + "'" + correctArray.class_id + "'" +">"
-                    str +="<td>"+correctArray.grade_name+"</td>";
-                    str +="<td>"+correctArray.class_name+"</td>";
-                    str +="<td></td>";
-                    str +="<td><div class='del-data' data-teacherid='" + correctArray.class_id + "'>删除</div></td>";
-                    str +="</tr>";
-                    $(".tb").append(str); 
-                    $('#add_teacher').css('display', 'none');
-                    $('.hover').css('display', 'none');
+                    // let correctArray = res.data
+                    // let str
+                    // str ="<tr class='datatr' id=" + "'" + correctArray.class_id + "'" +">"
+                    // str +="<td>"+correctArray.grade_name+"</td>";
+                    // str +="<td>"+correctArray.class_name+"</td>";
+                    // str +="<td></td>";
+                    // str +="<td><div class='del-data' data-teacherid='" + correctArray.class_id + "'>删除</div></td>";
+                    // str +="</tr>";
+                    // $(".tb").append(str); 
+                    // $('#add_teacher').css('display', 'none');
+                    // $('.hover').css('display', 'none');
+                    location.href = 'class.html';
                 } else if (res.status == 401) {
                     alert(res.error)
                     location.href = 'login.html';
