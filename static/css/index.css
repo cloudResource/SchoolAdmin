@@ -165,11 +165,11 @@
 }
 
 th {
-    padding-left: 20px;
+    padding-left: 20px !important;
 }
 
 td {
-    padding-left: 20px;
+    padding-left: 20px !important;
 }
 
 .all_data .htr{
@@ -208,6 +208,18 @@ td {
 }
 
 #add_teacher{ 
+    left:33%;
+    top: 20%; 
+    width:700px; 
+    height:500px; 
+    position:fixed;
+    background-color: white;
+    display: none;
+    z-index: 9999;
+    /* text-align: center; */
+}
+
+#attach_classroom{ 
     left:33%;
     top: 20%; 
     width:700px; 
@@ -353,6 +365,24 @@ td {
 
 .bd {
     width: 75px;
+}
+
+.classOprationBtn {
+    width: 127px !important;
+    height: 35px;
+    padding: 4px 25px 4px 25px;
+}
+
+.classOprationBtn:hover {
+    width: 127px !important;
+    height: 35px;
+    padding: 4px 25px 4px 25px;
+}
+
+.classDelBtn {
+    width: 102px !important;
+    height: 35px !important;
+    padding: 4px 25px;
 }
 
 .bd:hover{

@@ -11,6 +11,10 @@
     <script src="/static/js/main.js"></script>
     <script type="text/javascript" charset="utf-8" async="" src="/static/js/L2Dwidget.0.min.js"></script>
     <script src="/static/js/L2Dwidget.min.js"></script>
+<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="header">
@@ -72,6 +76,21 @@
             </div>
             <div id="option">
                 <div class="button blue-button save">确认</div>
+                <div class="button blue-button cannel">取消</div>
+            </div>
+        </div>
+
+        <div id="attach_classroom">
+            <div id="tittle_1">
+                <p>绑定教室</p>
+                <hr />
+            </div>
+            <div class="pop">
+                <p>选择班级:<input id="grade_name" /></p>
+                <p>选择年级:<input id="class_name" /></p>
+            </div>
+            <div id="option">
+                <div class="button blue-button attach">确认</div>
                 <div class="button blue-button cannel">取消</div>
             </div>
         </div>
@@ -181,8 +200,8 @@ $(function(){
                             str +="<td>"+correctArray[i].grade_name+"</td>";
                             str +="<td>"+correctArray[i].class_name+"</td>";
                             str +="<td>"+correctArray[i].equipment_data.mac_address+"</td>";
-                            str +="<td><div class='del-data bd' id='bdBtn" + (i+1) +"' >" + bd_1 + "</div>";
-                            str +="<div class='del-data delBtn' id='delBtn" + (i+1) + "' data-classid='" + correctArray[i].class_id + "'>删除</div>";
+                            str +="<td><div class='del-data bd classOprationBtn' id='bdBtn" + (i+1) +"' >" + bd_1 + "</div>";
+                            str +="<div class='del-data delBtn classDelBtn' id='delBtn" + (i+1) + "' data-classid='" + correctArray[i].class_id + "'>删除</div>";
                             str +="</td></tr>";
                             $(".tb").append(str);  
                         }
@@ -334,6 +353,16 @@ $(function(){
 		
 	});
 
+    $(document).on("click", ".bd", function() {
+        debugger
+		$('#attach_classroom').css('left' , ($(window).width() - $('#add_teacher').outerWidth())/2 );
+		$('#attach_classroom').css('top' , ($(window).height() - $('#add_teacher').outerHeight())/2 );
+		
+        $('#attach_classroom').css('display', 'block');
+        $('.hover').css('display', 'block');
+		
+	});
+
     $('#add_2').on('click', function(){
 		$('#batch_add').css('left' , ($(window).width() - $('#batch_add').outerWidth())/2 );
 		$('#batch_add').css('top' , ($(window).height() - $('#batch_add').outerHeight())/2 );
@@ -373,14 +402,17 @@ $(function(){
 
     $('.hover').on('click', function(){
         $('#add_teacher').css('display', 'none');
+        $('#attach_classroom').css('display', 'none');
         $('.del_window').css('display', 'none');
         $('#batch_add').css('display', 'none');
         $('.hover').css('display', 'none');
     });
     $('.cannel').on('click', function(){
         $('#add_teacher').css('display', 'none');
+        $('#attach_classroom').css('display', 'none');
         $('.del_window').css('display', 'none');
         $('.hover').css('display', 'none');
+        
     });
     $('.save').on('click', function(){
         console.log('add')
