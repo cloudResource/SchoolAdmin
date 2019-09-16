@@ -410,3 +410,15 @@ td {
     z-index: 9999;
     text-align: center;
 }
+
+.detach_window{
+    left:33%;
+    top: 30%; 
+    width:700px; 
+    height:240px; 
+    position:fixed;
+    background-color: white;
+    display: none;
+    z-index: 9999;
+    text-align: center;
+}

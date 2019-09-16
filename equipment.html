@@ -75,6 +75,53 @@
                 </div>
         </div>
 
+        
+        <div class="detach_window">
+            <div id="tittle_1">
+                <p>确认要解除绑定吗？</p>
+            </div>
+            <p></p>
+            <div id="option">
+                <div class="button blue-button delSave">确认</div>
+                <div class="button blue-button cannel">取消</div>
+            </div>
+        </div>
+
+        <div id="attach_classroom">
+            <div id="tittle_1">
+                <p>绑定教室</p>
+                <hr />
+            </div>
+            <div class="btn-group dropup pullUp">
+                <button type="button" class="btn btn-default character selectGrade">请选择年级</button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu doQu">
+                    <!-- Dropdown menu links -->
+
+
+                </ul>
+                <div class="btn-group dropup">
+                    <button type="button" class="btn btn-default character selectClass">请选择班级</button>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu quDo">
+                        <!-- Dropdown menu links -->
+
+
+                    </ul>
+                </div>
+            </div>
+            <div id="option">
+                <div class="button blue-button attach">确认</div>
+                <div class="button blue-button cannel">取消</div>
+            </div>
+        </div>
+
 
         <div id="batch_add">
             <div id="tittle_1">
@@ -102,6 +149,7 @@
 <script>
 
 $(function(){
+    var currentGrade, currentClass, classList, currentClassId, equipmentId
     $(window).load(function(){
         // $('body').css('height' , $(window).height());
 
@@ -154,19 +202,22 @@ $(function(){
                         let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
 
                         for (var i=0; i<correctArray.length; i++) {
-                            let str;
-                            let bd_1
-                            if(correctArray[i].class_data.class == undefined){
-                                correctArray[i].class_data.class = '',
-                                bd_1 = "绑定教室"
-                            }
-                            else{
-                                bd_1 = "解绑教室"
+                                let str;
+                                let bd_1
+                                let status_1
+                                if(correctArray[i].class_data.class == undefined){
+                                    correctArray[i].class_data.class = '',
+                                    status_1 = "bd_op"
+                                    bd_1 = "绑定教室"
+                                }
+                                else{
+                                    bd_1 = "解绑教室"
+                                    status_1 = "jb_op"
                             }
                             str ="<tr class='datatr' id=" + "'" + correctArray[i].equipment_id + "'" +">"
                             str +="<td>"+correctArray[i].mac_address+"</td>";
                             str +="<td>"+correctArray[i].class_data.class+"</td>";
-                            str +="<td><div class='del-data bd classOprationBtn' data-classid='" + correctArray.teacher_id + "'>" + bd_1 + "</div></td>";
+                            str +="<td><div class='del-data bd classOprationBtn " + status_1 + "' id='bdBtn" + (i+1) +"' data-id= '" + correctArray[i].equipment_id + "'>" + bd_1 + "</div>";
                             str +="</tr>";
                             $(".tb").append(str);
                         }
@@ -236,31 +287,114 @@ $(function(){
     $('#add_2').on('mouseout', function(){
         $('#add_2').attr("src", "/static/image/批量@2x.png");
     })
-
-    $(document).on("click", ".del-data", function(e) {
-        var class_id = e.currentTarget.dataset.classid;
+    $(document).on("click", ".bd_op", function(e) {
+        $('#attach_classroom').css('left' , ($(window).width() - $('#add_teacher').outerWidth())/2 );
+        $('#attach_classroom').css('top' , ($(window).height() - $('#add_teacher').outerHeight())/2 );
+        $('#attach_classroom').css('display', 'block');
+        $('.hover').css('display', 'block');
+        equipmentId = e.currentTarget.dataset.id
         $.ajax({
 
-            type: "POST",
+            type: "GET",
 
-            url: config.local + '/manager/v1/del_class',
+            url: config.local + '/manager/v1/classroom/available',
 
-            data:{class_id: class_id},
+            // dataType: "json",//返回json,text,html你自己定
 
-            dataType: "json",//返回json,text,html你自己定
-
-            success: function(res){//成功
+            success: function(res){//成
                 if(res.status == 200){
-                    $("#" + class_id).remove();
+                    $(".doQuContent").remove();
+                    // $(".quDo").remove();
+                    let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
+                    classList = res.data
+                    for (let i=0; i<correctArray.length; i++) {
+                        str ="<li class='doQuContent'><a class='gradeChooseBtn'>" + correctArray[i].grade_name + "</a></li>"
+                        $(".doQu").append(str);  
+                    }
+
+                    currentClass, currentGrade, currentClassId = null
+                    $('.selectGrade').html('请选择年级')
+                    $('.selectClass').html('请选择班级')
+                    
                 } else if (res.status == 401) {
                     alert(res.error)
                     location.href = 'login.html';
                 } else {
                     alert(res.error)
                 }
+
             }
+                        
+        });
+            
+    });
+
+    $(document).on("click", ".jb_op", function(e) {
+        $('.detach_window').css('left' , ($(window).width() - $('#add_teacher').outerWidth())/2 );
+        $('.detach_window').css('top' , ($(window).height() - $('#add_teacher').outerHeight())/2 );
+        $('.detach_window').css('display', 'block');
+        $('.hover').css('display', 'block');
+        debugger
+        equipmentId = e.currentTarget.dataset.id
+        $.ajax({
+
+            type: "GET",
+
+            url: config.local + '/manager/v1/classroom/available',
+
+            // dataType: "json",//返回json,text,html你自己定
+
+            success: function(res){//成
+                if(res.status == 200){
+                    $(".doQuContent").remove();
+                    // $(".quDo").remove();
+                    let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
+                    classList = res.data
+                    for (let i=0; i<correctArray.length; i++) {
+                        str ="<li class='doQuContent'><a class='gradeChooseBtn'>" + correctArray[i].grade_name + "</a></li>"
+                        $(".doQu").append(str);  
+                    }
+
+                    currentClass, currentGrade, currentClassId = null
+                    $('.selectGrade').html('请选择年级')
+                    $('.selectClass').html('请选择班级')
+                    
+                } else if (res.status == 401) {
+                    alert(res.error)
+                    location.href = 'login.html';
+                } else {
+                    alert(res.error)
+                }
+
+            }
+                        
+        });
+            
+    });
+
+    $(document).on("click", ".gradeChooseBtn", function(e) {
+            currentGrade = this.innerText
+            $(".classChooseBtn").remove();
+            
+            for (let i = 0; i < classList.length; i++) {
+                if (classList[i].grade_name == currentGrade) {
+                    for (let x = 0; x < classList[i].grade_class.length; x++) {
+                        str ="<li class='doQuContent'><a class='classChooseBtn' data-id='" + classList[i].grade_class[x].id + "' >" + classList[i].grade_class[x].class_name + "</a></li>"
+                        $(".quDo").append(str);  
+                    }
+                }   
+            }
+
+            $('.selectGrade').html(currentGrade)
         })
+
+    $(document).on("click", ".classChooseBtn", function(e) {
+        currentClass = this.innerText
+        currentClassId = e.currentTarget.dataset.id
+           
+        $('.selectClass').html(currentClass)
     })
+
     $('#classroom').on('click', function(){
         location.href = 'class.html';
     })
@@ -343,12 +477,50 @@ $(function(){
     $('.hover').on('click', function(){
         $('#add_teacher').css('display', 'none');
         $('#batch_add').css('display', 'none');
+        $('#attach_classroom').css('display', 'none');
+        $('.detach_window').css('display', 'none');
         $('.hover').css('display', 'none');
     });
     $('.cannel').on('click', function(){
         $('#add_teacher').css('display', 'none');
         $('.hover').css('display', 'none');
+        $('.detach_window').css('display', 'none');
+        $('#attach_classroom').css('display', 'none');
     });
+
+    $('.attach').on('click', function(){
+            if (currentClass == null){
+                alert('请输入年级！')
+                return
+            }
+            if (currentGrade == null){
+                alert('请输入年级！')
+                return
+            }
+            $.ajax({
+
+                type: "post",
+
+                url: config.local + '/manager/v1/equipment/' + equipmentId +'/attach_classroom',
+                data: {
+                    "class_id": currentClassId,
+                },
+                dataType: "json",//返回json,text,html你自己定
+                
+                success: function(res){//成功
+                    if(res.status == 200){
+                        location.href = 'equipment.html';
+                    } else if (res.status == 401) {
+                        alert(res.error)
+                        location.href = 'login.html';
+                    } else {
+                        alert(res.error)
+                    }
+                }
+            })
+
+    })
+
     $('.save').on('click', function(){
         console.log('add')
         var gradeName = $('#grade_name').val();
@@ -402,7 +574,7 @@ $(function(){
         // a.download = 'test';
         a.href = config.local + '/manager/v1/file_down?file_type=class_excel';         
         a.click();          
-        return;  
+        return;
     })
 
     $('#upo3').on('click', function(){

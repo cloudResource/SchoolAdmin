@@ -82,7 +82,7 @@
 
         <div id="attach_classroom">
             <div id="tittle_1">
-                <p>绑定教室</p>
+                <p>绑定设备</p>
                 <hr />
             </div>
             <div class="btn-group dropup pullUp">
@@ -150,85 +150,260 @@
 
 
 </body>
+
 <script>
+    $(function(){
+        var currentClassId, currentGrade, currentClass, classList
+        $(window).load(function(){
+            // var currentClassId
+            // $('body').css('height' , $(window).height());
 
-$(function(){
-    var currentClassId, currentGrade, currentClass, classList
-    $(window).load(function(){
-        // var currentClassId
-        // $('body').css('height' , $(window).height());
+                    // live2d    
+            L2Dwidget.init({
+                "model": {
+        　　　　　　　//jsonpath控制显示那个小萝莉模型，下面这个就是我觉得最可爱的小萝莉模型
+                    jsonPath: "https://unpkg.com/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json",
+                    "scale": 1
+                },
+                "display": {
+                    "position": "left", //看板娘的表现位置
+                    "width": 112.5,  //小萝莉的宽度
+                    "height": 225, //小萝莉的高度
+                    "hOffset": 0,
+                    "vOffset": 135,
+                },
+                "mobile": {
+                    "show": true,
+                    "scale": 0.5
+                },
+                "react": {
+                    "opacityDefault": 0.7,
+                    "opacityOnHover": 0.2
+                }
+            });
 
-                // live2d    
-        L2Dwidget.init({
-            "model": {
-    　　　　　　　//jsonpath控制显示那个小萝莉模型，下面这个就是我觉得最可爱的小萝莉模型
-                jsonPath: "https://unpkg.com/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json",
-                "scale": 1
-            },
-            "display": {
-                "position": "left", //看板娘的表现位置
-                "width": 112.5,  //小萝莉的宽度
-                "height": 225, //小萝莉的高度
-                "hOffset": 0,
-                "vOffset": 135,
-            },
-            "mobile": {
-                "show": true,
-                "scale": 0.5
-            },
-            "react": {
-                "opacityDefault": 0.7,
-                "opacityOnHover": 0.2
-            }
-        });
+            $.ajax({
 
-        $.ajax({
+                type: "GET",
 
-            type: "GET",
+                url: config.local + '/manager/v1/get_classes',
 
-            url: config.local + '/manager/v1/get_classes',
+                // dataType: "json",//返回json,text,html你自己定
 
-            // dataType: "json",//返回json,text,html你自己定
+                success: function(res){//成
+                        if(res.status == 200){
+                            $(".datatr").remove();
+                            
+                            // $.each(res.data,function(i,n){  
+                            //     debugger
+                            //     str+='<tr class="datatr" id="data-teacher">'
+                            //     str+="<td>"+n[i].teacher_name+"</td>";
+                            //     str+="<td>"+n[i].mobile+"</td>";
+                            //     str+="<td>"+n[i].teacher_id+"</td>";
+                            //     str+="</tr>";
+                            //     $(".tb").append(str);
+                            // });
 
-            success: function(res){//成
-                    if(res.status == 200){
-                        $(".datatr").remove();
-                        
-                        // $.each(res.data,function(i,n){  
-                        //     debugger
-                        //     str+='<tr class="datatr" id="data-teacher">'
-                        //     str+="<td>"+n[i].teacher_name+"</td>";
-                        //     str+="<td>"+n[i].mobile+"</td>";
-                        //     str+="<td>"+n[i].teacher_id+"</td>";
-                        //     str+="</tr>";
-                        //     $(".tb").append(str);
-                        // });
+                            let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
 
-                        let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
-
-                        for (var i=0; i<correctArray.length; i++) {
-                            let str;
-                            let bd_1
-                            let status_1
-                            if(correctArray[i].equipment_data.mac_address == undefined){
-                                correctArray[i].equipment_data.mac_address = '',
-                                status_1 = "bd_op"
-                                bd_1 = "绑定设备"
+                            for (var i=0; i<correctArray.length; i++) {
+                                let str;
+                                let bd_1
+                                let status_1
+                                if(correctArray[i].equipment_data.mac_address == undefined){
+                                    correctArray[i].equipment_data.mac_address = '',
+                                    status_1 = "bd_op"
+                                    bd_1 = "绑定设备"
+                                }
+                                else{
+                                    bd_1 = "解绑设备"
+                                    status_1 = "jb_op"
+                                }
+                                str ="<tr class='datatr' id=" + "'" + correctArray[i].class_id + "'" +">"
+                                str +="<td>"+correctArray[i].grade_name+"</td>";
+                                str +="<td>"+correctArray[i].class_name+"</td>";
+                                str +="<td>"+correctArray[i].equipment_data.mac_address+"</td>";
+                                str +="<td><div class='del-data bd classOprationBtn " + status_1 + "' id='bdBtn" + (i+1) +"' >" + bd_1 + "</div>";
+                                str +="<div class='del-data delBtn classDelBtn' id='delBtn" + (i+1) + "' data-classid='" + correctArray[i].class_id + "'>删除</div>";
+                                str +="</td></tr>";
+                                $(".tb").append(str);  
                             }
-                            else{
-                                bd_1 = "解绑设备"
-                                status_1 = "jb_op"
-                            }
-                            str ="<tr class='datatr' id=" + "'" + correctArray[i].class_id + "'" +">"
-                            str +="<td>"+correctArray[i].grade_name+"</td>";
-                            str +="<td>"+correctArray[i].class_name+"</td>";
-                            str +="<td>"+correctArray[i].equipment_data.mac_address+"</td>";
-                            str +="<td><div class='del-data bd classOprationBtn " + status_1 + "' id='bdBtn" + (i+1) +"' >" + bd_1 + "</div>";
-                            str +="<div class='del-data delBtn classDelBtn' id='delBtn" + (i+1) + "' data-classid='" + correctArray[i].class_id + "'>删除</div>";
-                            str +="</td></tr>";
-                            $(".tb").append(str);  
+
+                        } else if (res.status == 401) {
+                            alert(res.error)
+                            location.href = 'login.html';
+                        } else {
+                            alert(res.error)
                         }
 
+                }
+                        
+            });
+
+        })
+
+        // $(document).on("mouseover", ".delBtn", function(e) {
+        //     let currentId = e.currentTarget.id
+        //     console.log(currentId)
+
+        //     $("#" + currentId).css('display', 'block')
+        // })
+
+        // 退出
+        $('#logout').on('click', function(){
+            console.log(2111)
+            $.ajax({
+                url: config.local + '/manager/v1/logout',
+                type: 'GET',
+                
+                success: function(response){
+                // console.log(response.status)
+                if(response.status == 200)
+                    {
+                        location.href = 'login.html';
+                    }
+                else
+                    {
+                        alert(response.error)
+                    }
+                }
+            });
+        });
+
+        $('#p1').on('mouseover', function(){
+            $('#p1').attr("src", "/static/image/未标题-1_09.png");
+        })
+        $('#p1').on('mouseout', function(){
+            $('#p1').attr("src", "/static/image/未标题-1_03.png");
+        })
+        $('#p2').on('mouseover', function(){
+            $('#p2').attr("src", "/static/image/未标题-1_10.png");
+        })
+        $('#p2').on('mouseout', function(){
+            $('#p2').attr("src", "/static/image/未标题-1_05.png");
+        })
+        $('#p3').on('mouseover', function(){
+            $('#p3').attr("src", "/static/image/设备管理1.png");
+        })
+        $('#p3').on('mouseout', function(){
+            $('#p3').attr("src", "/static/image/设备管理2.png");
+        })
+        $('#add_1').on('mouseover', function(){
+            $('#add_1').attr("src", "/static/image/添加教室选中@2x.png");
+        })
+        $('#add_1').on('mouseout', function(){
+            $('#add_1').attr("src", "/static/image/添加教室未选中@2x.png");
+        })
+        $('#add_2').on('mouseover', function(){
+            $('#add_2').attr("src", "/static/image/教师 (1)@2x(1).png");
+        })
+        $('#add_2').on('mouseout', function(){
+            $('#add_2').attr("src", "/static/image/批量@2x.png");
+        })
+        
+        $(document).on("click", ".delSave", function() {
+            $.ajax({
+
+                type: "POST",
+
+                url: config.local + '/manager/v1/del_class',
+
+                data:{class_id: currentClassId},
+
+                dataType: "json",//返回json,text,html你自己定
+
+                success: function(res){//成功
+                    if(res.status == 200){
+                        $('.del_window').css('display', 'none');
+                        $('.hover').css('display', 'none');
+                        $("#" + currentClassId).remove();
+                    } else if (res.status == 401) {
+                        alert(res.error)
+                        location.href = 'login.html';
+                    } else {
+                        alert(res.error)
+                    }
+                }
+            })
+        })
+        $('#classroom').on('click', function(){
+            location.href = 'class.html';
+        })
+        $('#teacher').on('click', function(){
+            location.href = 'index.html';
+        })
+        $('#equipment').on('click', function(){
+            location.href = 'equipment.html';
+        })
+
+        $('#add_1').on('click', function(){
+            
+            // Old version
+            // var oLogin = $('<div id="add_teacher">\
+            //                     <p id="tittle_1">添加教师</p>\
+            //                     <p>教师名称:<input type="text" /></p>\
+            //                     <p>教师账号:<input type="text" /></p>\
+            //                     <div id="close">X</div>\
+            //                     <div id="option">\
+            //                         <button>取消</button>\
+            //                         <button>确认</button>\
+            //                     </div>\
+            //                 </div>');
+            
+            // $('body').append( oLogin );
+            
+            $('#add_teacher').css('left' , ($(window).width() - $('#add_teacher').outerWidth())/2 );
+            $('#add_teacher').css('top' , ($(window).height() - $('#add_teacher').outerHeight())/2 );
+            
+            
+            // $('#close').click(function(){
+                
+            // 	oLogin.remove();
+                
+            // });
+            
+            
+            // $(window).on('resize scroll',function(){
+                
+            // 	oLogin.css('left' , ($(window).width() - oLogin.outerWidth())/2 );
+            //     oLogin.css('top' , ($(window).height() - oLogin.outerHeight())/2 + $(window).scrollTop() );
+                
+            // });
+
+            // new version
+            $('#add_teacher').css('display', 'block');
+            $('.hover').css('display', 'block');
+            
+        });
+
+        $(document).on("click", ".bd_op", function() {
+            $('#attach_classroom').css('left' , ($(window).width() - $('#add_teacher').outerWidth())/2 );
+            $('#attach_classroom').css('top' , ($(window).height() - $('#add_teacher').outerHeight())/2 );
+            $('#attach_classroom').css('display', 'block');
+            $('.hover').css('display', 'block');
+            $.ajax({
+
+                type: "GET",
+
+                url: config.local + '/manager/v1/classroom/available',
+
+                // dataType: "json",//返回json,text,html你自己定
+
+                success: function(res){//成
+                    if(res.status == 200){
+                        $(".doQuContent").remove();
+                        // $(".quDo").remove();
+                        let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
+                        classList = res.data
+                        for (let i=0; i<correctArray.length; i++) {
+                            str ="<li class='doQuContent'><a class='gradeChooseBtn'>" + correctArray[i].grade_name + "</a></li>"
+                            $(".doQu").append(str);  
+                        }
+
+                        currentClass, currentGrade = null
+                        $('.selectGrade').html('请选择年级')
+                        $('.selectClass').html('请选择班级')
+                        
                     } else if (res.status == 401) {
                         alert(res.error)
                         location.href = 'login.html';
@@ -236,415 +411,240 @@ $(function(){
                         alert(res.error)
                     }
 
-            }
-                    
+                }
+                        
+            });
+            
         });
 
-    })
-
-    // $(document).on("mouseover", ".delBtn", function(e) {
-    //     let currentId = e.currentTarget.id
-    //     console.log(currentId)
-
-    //     $("#" + currentId).css('display', 'block')
-    // })
-
-    // 退出
-	$('#logout').on('click', function(){
-		console.log(2111)
-		$.ajax({
-			url: config.local + '/manager/v1/logout',
-			type: 'GET',
-			 
-			success: function(response){
-			// console.log(response.status)
-			if(response.status == 200)
-				{
-					location.href = 'login.html';
-				}
-			else
-				{
-					alert(response.error)
-				}
-			}
-		});
-	});
-
-    $('#p1').on('mouseover', function(){
-        $('#p1').attr("src", "/static/image/未标题-1_09.png");
-    })
-    $('#p1').on('mouseout', function(){
-        $('#p1').attr("src", "/static/image/未标题-1_03.png");
-    })
-    $('#p2').on('mouseover', function(){
-        $('#p2').attr("src", "/static/image/未标题-1_10.png");
-    })
-    $('#p2').on('mouseout', function(){
-        $('#p2').attr("src", "/static/image/未标题-1_05.png");
-    })
-    $('#p3').on('mouseover', function(){
-        $('#p3').attr("src", "/static/image/设备管理1.png");
-    })
-    $('#p3').on('mouseout', function(){
-        $('#p3').attr("src", "/static/image/设备管理2.png");
-    })
-    $('#add_1').on('mouseover', function(){
-        $('#add_1').attr("src", "/static/image/添加教室选中@2x.png");
-    })
-    $('#add_1').on('mouseout', function(){
-        $('#add_1').attr("src", "/static/image/添加教室未选中@2x.png");
-    })
-    $('#add_2').on('mouseover', function(){
-        $('#add_2').attr("src", "/static/image/教师 (1)@2x(1).png");
-    })
-    $('#add_2').on('mouseout', function(){
-        $('#add_2').attr("src", "/static/image/批量@2x.png");
-    })
-    
-    $(document).on("click", ".delSave", function() {
-        $.ajax({
-
-            type: "POST",
-
-            url: config.local + '/manager/v1/del_class',
-
-            data:{class_id: currentClassId},
-
-            dataType: "json",//返回json,text,html你自己定
-
-            success: function(res){//成功
-                if(res.status == 200){
-                    $('.del_window').css('display', 'none');
-                    $('.hover').css('display', 'none');
-                    $("#" + currentClassId).remove();
-                } else if (res.status == 401) {
-                    alert(res.error)
-                    location.href = 'login.html';
-                } else {
-                    alert(res.error)
-                }
-            }
-        })
-    })
-    $('#classroom').on('click', function(){
-        location.href = 'class.html';
-    })
-    $('#teacher').on('click', function(){
-        location.href = 'index.html';
-    })
-    $('#equipment').on('click', function(){
-        location.href = 'equipment.html';
-    })
-
-    $('#add_1').on('click', function(){
-		
-        // Old version
-		// var oLogin = $('<div id="add_teacher">\
-        //                     <p id="tittle_1">添加教师</p>\
-        //                     <p>教师名称:<input type="text" /></p>\
-        //                     <p>教师账号:<input type="text" /></p>\
-        //                     <div id="close">X</div>\
-        //                     <div id="option">\
-        //                         <button>取消</button>\
-        //                         <button>确认</button>\
-        //                     </div>\
-        //                 </div>');
-		
-		// $('body').append( oLogin );
-		
-		$('#add_teacher').css('left' , ($(window).width() - $('#add_teacher').outerWidth())/2 );
-		$('#add_teacher').css('top' , ($(window).height() - $('#add_teacher').outerHeight())/2 );
-		
-		
-		// $('#close').click(function(){
-			
-		// 	oLogin.remove();
-			
-		// });
-		
-		
-		// $(window).on('resize scroll',function(){
-			
-		// 	oLogin.css('left' , ($(window).width() - oLogin.outerWidth())/2 );
-		//     oLogin.css('top' , ($(window).height() - oLogin.outerHeight())/2 + $(window).scrollTop() );
-			
-		// });
-
-        // new version
-        $('#add_teacher').css('display', 'block');
-        $('.hover').css('display', 'block');
-		
-	});
-
-    $(document).on("click", ".bd_op", function() {
-		$('#attach_classroom').css('left' , ($(window).width() - $('#add_teacher').outerWidth())/2 );
-		$('#attach_classroom').css('top' , ($(window).height() - $('#add_teacher').outerHeight())/2 );
-        $('#attach_classroom').css('display', 'block');
-        $('.hover').css('display', 'block');
-        $.ajax({
-
-            type: "GET",
-
-            url: config.local + '/manager/v1/classroom/available',
-
-            // dataType: "json",//返回json,text,html你自己定
-
-            success: function(res){//成
-                if(res.status == 200){
-                    $(".doQuContent").remove();
-                    // $(".quDo").remove();
-                    let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
-                    classList = res.data
-                    for (let i=0; i<correctArray.length; i++) {
-                        str ="<li class='doQuContent'><a class='gradeChooseBtn'>" + correctArray[i].grade_name + "</a></li>"
-                        $(".doQu").append(str);  
+        $(document).on("click", ".gradeChooseBtn", function(e) {
+            currentGrade = this.innerText
+            $(".classChooseBtn").remove();
+            
+            for (let i = 0; i < classList.length; i++) {
+                if (classList[i].grade_name == currentGrade) {
+                    for (let x = 0; x < classList[i].grade_class.length; x++) {
+                        str ="<li class='doQuContent'><a class='classChooseBtn'>" + classList[i].grade_class[x].class_name + "</a></li>"
+                        $(".quDo").append(str);  
                     }
-
-                    currentClass, currentGrade = null
-                    $('.selectGrade').html('请选择年级')
-                    $('.selectClass').html('请选择班级')
-                    
-                } else if (res.status == 401) {
-                    alert(res.error)
-                    location.href = 'login.html';
-                } else {
-                    alert(res.error)
-                }
-
+                }   
             }
-                    
-        });
-		
-	});
 
-    $(document).on("click", ".gradeChooseBtn", function(e) {
-        currentGrade = this.innerText
-        $(".classChooseBtn").remove();
+            $('.selectGrade').html(currentGrade)
+        })
+
+        $(document).on("click", ".classChooseBtn", function(e) {
+            currentClass = this.innerText        
+
+            $('.selectClass').html(currentClass)
+        })
         
-        for (let i = 0; i < classList.length; i++) {
-            if (classList[i].grade_name == currentGrade) {
-                for (let x = 0; x < classList[i].grade_class.length; x++) {
-                    str ="<li class='doQuContent'><a class='classChooseBtn'>" + classList[i].grade_class[x].class_name + "</a></li>"
-                    $(".quDo").append(str);  
+        $('#add_2').on('click', function(){
+            $('#batch_add').css('left' , ($(window).width() - $('#batch_add').outerWidth())/2 );
+            $('#batch_add').css('top' , ($(window).height() - $('#batch_add').outerHeight())/2 );
+            
+            $('#batch_add').css('display', 'block');
+            $('.hover').css('display', 'block');
+            
+        });
+
+        $(document).on("click", ".delBtn", function(e) {
+            currentClassId = e.currentTarget.dataset.classid;
+            $('.del_window').css('left' , ($(window).width() - $('#batch_add').outerWidth())/2 );
+            $('.del_window').css('top' , ($(window).height() - $('#batch_add').outerHeight())/1.5 );
+            $('.del_window').css('display', 'block');
+            $('.hover').css('display', 'block');
+            
+        });
+
+
+
+        $('#upo9').on('mouseover', function(){
+            $('#upo9').css('background-color', '#5BB1FB');
+            $('#upo9').css('color', '#FFFFFF');
+        })
+        $('#upo9').on('mouseout', function(){
+            $('#upo9').css('background-color', '#FFFFFF');
+            $('#upo9').css('color', '#666666');
+        })
+        $('#upo3').on('mouseover', function(){
+            $('#upo3').css('background-color', '#5BB1FB');
+            $('#upo3').css('color', '#FFFFFF');
+        })
+        $('#upo3').on('mouseout', function(){
+            $('#upo3').css('background-color', '#FFFFFF');
+            $('#upo3').css('color', '#666666');
+        })
+
+        $('.hover').on('click', function(){
+            $('#add_teacher').css('display', 'none');
+            $('#attach_classroom').css('display', 'none');
+            $('.del_window').css('display', 'none');
+            $('#batch_add').css('display', 'none');
+            $('.hover').css('display', 'none');
+        });
+        $('.cannel').on('click', function(){
+            $('#add_teacher').css('display', 'none');
+            $('#attach_classroom').css('display', 'none');
+            $('.del_window').css('display', 'none');
+            $('.hover').css('display', 'none');
+            
+        });
+
+
+    $('.attach').on('click', function(){
+            if (currentClass == null){
+                alert('请输入年级！')
+                return
+            }
+            if (currentGrade == null){
+                alert('请输入年级！')
+                return
+            }
+            debugger
+            console.log('add')
+            if(gradeName == ''){
+                alert('请输入年级！')
+                return
+            }
+            if(className == ''){
+                alert('请输入班级！')
+                return
+            }
+            
+            console.log('jump')
+            $.ajax({
+
+                type: "post",
+
+                url: config.local + '/manager/v1/equipment/' + equipmentId +'/attach_classroom',
+                data: {
+                    "class_id": classId,
+                },
+                dataType: "json",//返回json,text,html你自己定
+                
+                success: function(res){//成功
+                    if(res.status == 200){
+                        location.href = 'class.html';
+                    } else if (res.status == 401) {
+                        alert(res.error)
+                        location.href = 'login.html';
+                    } else {
+                        alert(res.error)
+                    }
                 }
-            }   
+            })
+
+    })
+
+        $('.save').on('click', function(){
+            console.log('add')
+            var gradeName = $('#grade_name').val();
+            var className = $('#class_name').val();
+            console.log(2111)
+            if(gradeName == ''){
+                alert('请输入年级！')
+                return
+            }
+            if(className == ''){
+                alert('请输入班级！')
+                return
+            }
+            
+            console.log('jump')
+            $.ajax({
+
+                type: "post",
+
+                url: config.local + '/manager/v1/add_class',
+                data: {
+                    "grade_name": gradeName,
+                    "class_name": className,
+                },
+                dataType: "json",//返回json,text,html你自己定
+                
+                success: function(res){//成功
+                    if(res.status == 200){
+                        location.href = 'class.html';
+                    } else if (res.status == 401) {
+                        alert(res.error)
+                        location.href = 'login.html';
+                    } else {
+                        alert(res.error)
+                    }
+                }
+            })
+        })
+
+        $('#upo9').on('click', function(){
+            console.log('add')
+            var a = document.createElement("a");          
+            // a.download = 'test';
+            a.href = config.local + '/manager/v1/file_down?file_type=class_excel';         
+            a.click();          
+            return;  
+        })
+
+        $('#upo3').on('click', function(){
+            openFileDialog()
+        })
+
+        function startFileUpload(file){
+            var formData = new FormData();
+            formData.append("excel_file" , file)
+
+            $.ajax({
+                type: "POST",
+                url: config.local + '/manager/v1/add_class/batch',
+                data: formData,
+                contentType : false,
+                processData : false,
+                success: function(res){//成功
+                    if(res.status == 200){
+                        alert(res.message)
+                        location.reload() 
+                    } else if (res.status == 401){
+                        alert(res.error)
+                        location.href = 'login.html';
+                    } else {
+                        alert(res.error)
+                    }
+                },
+                fail: function(res){
+                    console.log(res)
+                    alert(res.error)
+                }
+            })
         }
 
-        $('.selectGrade').html(currentGrade)
-    })
+        function openFileDialog(){
+            $(".filebutton").click();
+        }
+            //选择一个文件时onchange时间被触发
 
-    $(document).on("click", ".classChooseBtn", function(e) {
-        currentClass = this.innerText        
+        $('.filebutton').on('change',function(){
+            var fbutton = $(".filebutton")[0];//dom元素
+            //读取文件
+            var reader = new FileReader();
+            // reader.onload = function(e){
+            //     debugger
+            //     var dataURL = e.target.result;//'data:image/jpeg;base64,/9j/4AAQSk...(base64编码)...'   
+            //     //alert(data);
+            //     var htmlImg = "<img src = '" + dataURL + "'/>";
+            //     $(".img").html(htmlImg);
+            // }
+            var file = fbutton.files[0];
+            reader.readAsDataURL(file);
 
-        $('.selectClass').html(currentClass)
-    })
-    
-    $('#add_2').on('click', function(){
-		$('#batch_add').css('left' , ($(window).width() - $('#batch_add').outerWidth())/2 );
-		$('#batch_add').css('top' , ($(window).height() - $('#batch_add').outerHeight())/2 );
-		
-        $('#batch_add').css('display', 'block');
-        $('.hover').css('display', 'block');
-		
-	});
-
-    $(document).on("click", ".delBtn", function(e) {
-		currentClassId = e.currentTarget.dataset.classid;
-		$('.del_window').css('left' , ($(window).width() - $('#batch_add').outerWidth())/2 );
-		$('.del_window').css('top' , ($(window).height() - $('#batch_add').outerHeight())/1.5 );
-        $('.del_window').css('display', 'block');
-        $('.hover').css('display', 'block');
-		
-	});
-
-
-
-    $('#upo9').on('mouseover', function(){
-        $('#upo9').css('background-color', '#5BB1FB');
-        $('#upo9').css('color', '#FFFFFF');
-    })
-    $('#upo9').on('mouseout', function(){
-        $('#upo9').css('background-color', '#FFFFFF');
-        $('#upo9').css('color', '#666666');
-    })
-    $('#upo3').on('mouseover', function(){
-        $('#upo3').css('background-color', '#5BB1FB');
-        $('#upo3').css('color', '#FFFFFF');
-    })
-    $('#upo3').on('mouseout', function(){
-        $('#upo3').css('background-color', '#FFFFFF');
-        $('#upo3').css('color', '#666666');
-    })
-
-    $('.hover').on('click', function(){
-        $('#add_teacher').css('display', 'none');
-        $('#attach_classroom').css('display', 'none');
-        $('.del_window').css('display', 'none');
-        $('#batch_add').css('display', 'none');
-        $('.hover').css('display', 'none');
-    });
-    $('.cannel').on('click', function(){
-        $('#add_teacher').css('display', 'none');
-        $('#attach_classroom').css('display', 'none');
-        $('.del_window').css('display', 'none');
-        $('.hover').css('display', 'none');
+            startFileUpload(file);
+        })
         
-    });
-
-
-$('.attach').on('click', function(){
-        if (currentClass == null){
-			alert('请输入年级！')
-			return
-		}
-        if (currentGrade == null){
-			alert('请输入年级！')
-			return
-		}
-        console.log('add')
-		if(gradeName == ''){
-			alert('请输入年级！')
-			return
-		}
-		if(className == ''){
-			alert('请输入班级！')
-			return
-		}
-		
-		console.log('jump')
-        $.ajax({
-
-            type: "post",
-
-            url: config.local + '/manager/v1/add_class',
-            data: {
-				"grade_name": gradeName,
-				"class_name": className,
-			},
-            dataType: "json",//返回json,text,html你自己定
-            
-            success: function(res){//成功
-                if(res.status == 200){
-                    location.href = 'class.html';
-                } else if (res.status == 401) {
-                    alert(res.error)
-                    location.href = 'login.html';
-                } else {
-                    alert(res.error)
-                }
-            }
-        })
-
-
-    $('.save').on('click', function(){
-        console.log('add')
-        var gradeName = $('#grade_name').val();
-		var className = $('#class_name').val();
-		console.log(2111)
-		if(gradeName == ''){
-			alert('请输入年级！')
-			return
-		}
-		if(className == ''){
-			alert('请输入班级！')
-			return
-		}
-		
-		console.log('jump')
-        $.ajax({
-
-            type: "post",
-
-            url: config.local + '/manager/v1/add_class',
-            data: {
-				"grade_name": gradeName,
-				"class_name": className,
-			},
-            dataType: "json",//返回json,text,html你自己定
-            
-            success: function(res){//成功
-                if(res.status == 200){
-                    location.href = 'class.html';
-                } else if (res.status == 401) {
-                    alert(res.error)
-                    location.href = 'login.html';
-                } else {
-                    alert(res.error)
-                }
-            }
-        })
-    })
-    $('#upo9').on('click', function(){
-        console.log('add')
-        var a = document.createElement("a");          
-        // a.download = 'test';
-        a.href = config.local + '/manager/v1/file_down?file_type=class_excel';         
-        a.click();          
-        return;  
-    })
-
-    $('#upo3').on('click', function(){
-        openFileDialog()
-    })
-
-    function startFileUpload(file){
-        var formData = new FormData();
-	    formData.append("excel_file" , file)
-
-        $.ajax({
-            type: "POST",
-            url: config.local + '/manager/v1/add_class/batch',
-            data: formData,
-            contentType : false,
-            processData : false,
-            success: function(res){//成功
-                if(res.status == 200){
-                    alert(res.message)
-                    location.reload() 
-                } else if (res.status == 401){
-                    alert(res.error)
-                    location.href = 'login.html';
-                } else {
-                    alert(res.error)
-                }
-            },
-            fail: function(res){
-                console.log(res)
-                alert(res.error)
-            }
-        })
-    }
-
-    function openFileDialog(){
-        $(".filebutton").click();
-    }
-        //选择一个文件时onchange时间被触发
-
-    $('.filebutton').on('change',function(){
-        var fbutton = $(".filebutton")[0];//dom元素
-        //读取文件
-        var reader = new FileReader();
-        // reader.onload = function(e){
-        //     debugger
-        //     var dataURL = e.target.result;//'data:image/jpeg;base64,/9j/4AAQSk...(base64编码)...'   
-        //     //alert(data);
-        //     var htmlImg = "<img src = '" + dataURL + "'/>";
-        //     $(".img").html(htmlImg);
-        // }
-        var file = fbutton.files[0];
-        reader.readAsDataURL(file);
-
-        startFileUpload(file);
-    })
-    
-    function fileSelected(){
+        function fileSelected(){
+                        
+        }
         
-        	    	
-    }
-    
 
-})
+    })
 
-
-</script>
+    </script>
 </html>
