@@ -32,7 +32,16 @@
         </div>
     </div>
 
-
+    <div class="detach_window">
+        <div id="tittle_1">
+            <p>确认要取消授权吗？</p>
+        </div>
+        <p></p>
+        <div id="option">
+            <div class="button blue-button detachSave">确认</div>
+            <div class="button blue-button cannel">取消</div>
+        </div>
+    </div>
 
     <div class="meum_all">
         <div class="all_list">
@@ -59,6 +68,7 @@
                 <tr class="htr">
                     <th>教师</th>
                     <th>教师账号</th>
+                    <th>权限</th>
                     <th>操作</th>
                 </tr>
             </table>
@@ -170,10 +180,22 @@ $(function(){
 
                         for (var i=0; i<correctArray.length; i++) {
                             let str;
+                            let teacherRole;
+                            if(correctArray[i].teacher_role == "teacher"){
+                                teacherRole = "普通教师"
+                                teacherRoleClass = "teacher"
+                                teacherRoleButton = "管理授权"
+                            }else{
+                                teacherRole = "管理教师"
+                                teacherRoleClass = "admin_teacher"
+                                teacherRoleButton = "取消授权"
+                            }
                             str ="<tr class='datatr' id=" + "'" + correctArray[i].teacher_id + "'" +">"
                             str +="<td>"+correctArray[i].teacher_name+"</td>";
                             str +="<td>"+correctArray[i].teacher_mobile+"</td>";
-                            str +="<td><div class='del-data delBtn classDelBtn' data-teacherid='" + correctArray[i].teacher_id + "'>删除</div></td>";
+                            str +="<td>"+teacherRole+"</td>";                            
+                            str +="<td><div class='del-data jurisdiction " + teacherRoleClass + "' data-teacherid='" + correctArray[i].teacher_id + "'>"+ teacherRoleButton +"</div>";
+                            str +="<div class='del-data delBtn classDelBtn' data-teacherid='" + correctArray[i].teacher_id + "'>删除</div></td>";
                             str +="</tr>";
                             $(".tb").append(str);  
                         }
@@ -259,6 +281,68 @@ $(function(){
                     // $("#" + currentTeacherId).remove();
                     location.href = 'index.html';
                 } else if (res.status == 401) {
+                    alert(res.error)
+                    location.href = 'login.html';
+                } else {
+                    alert(res.error)
+                }
+            }
+        })
+    })
+
+    $(document).on("click", ".admin_teacher", function(e) {
+        $('.detach_window').css('left' , ($(window).width() - $('#add_teacher').outerWidth())/2 );
+        $('.detach_window').css('top' , ($(window).height() - $('#add_teacher').outerHeight())/2 );
+        $('.detach_window').css('display', 'block');
+        $('.hover').css('display', 'block');
+		currentTeacherId = e.currentTarget.dataset.teacherid;
+    });
+
+    $(document).on("click", ".teacher", function(e) {
+		currentTeacherId = e.currentTarget.dataset.teacherid;
+        $.ajax({
+
+            type: "POST",
+
+            url: config.local + '/manager/v1/admin_teacher/auth',
+
+            data:{teacher_id: currentTeacherId},
+
+            dataType: "json",//返回json,text,html你自己定
+
+            success: function(res){//成功
+                if(res.status == 200){
+                    alert("教师授权成功")
+                    location.href = 'index.html';
+                } else if (res.status == 401) {
+                    debugger
+                    alert(res.error)
+                    location.href = 'login.html';
+                } else {
+                    alert(res.error)
+                }
+            }
+        })
+
+    });
+
+    $('.detachSave').on('click', function(e){
+        $.ajax({
+
+            type: "post",
+
+            url: config.local + '/manager/v1/admin_teacher/cancel',
+
+            data: {teacher_id: currentTeacherId},
+
+            dataType: "json",//返回json,text,html你自己定
+
+            success: function(res){//成功
+                if(res.status == 200){
+                    alert("取消授权成功")
+                    location.href = 'index.html';
+                } else if (res.status == 401) {
+                    debugger
                     alert(res.error)
                     location.href = 'login.html';
                 } else {
@@ -359,11 +443,13 @@ $(function(){
         $('#add_teacher').css('display', 'none');
         $('#batch_add').css('display', 'none');
         $('.del_window').css('display', 'none');
+        $('.detach_window').css('display', 'none');
         $('.hover').css('display', 'none');
     });
     $('.cannel').on('click', function(){
         $('#add_teacher').css('display', 'none');
         $('.del_window').css('display', 'none');
+        $('.detach_window').css('display', 'none');
         $('.hover').css('display', 'none');
     });
     $('.save').on('click', function(){

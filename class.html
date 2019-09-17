@@ -80,34 +80,31 @@
             </div>
         </div>
 
+        <div class="detach_window">
+            <div id="tittle_1">
+                <p>确认要解除绑定吗？</p>
+            </div>
+            <p></p>
+            <div id="option">
+                <div class="button blue-button detachSave">确认</div>
+                <div class="button blue-button cannel">取消</div>
+            </div>
+        </div>
+
         <div id="attach_classroom">
             <div id="tittle_1">
                 <p>绑定设备</p>
                 <hr />
             </div>
-            <div class="btn-group dropup pullUp">
-                <button type="button" class="btn btn-default character selectGrade">请选择年级</button>
+            <div class="btn-group dropup equipmentUp">
+                <button type="button" class="btn btn-default sizeMark">请选择设备MAC地址</button>
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="caret"></span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu doQu">
                     <!-- Dropdown menu links -->
-
-
                 </ul>
-                <div class="btn-group dropup">
-                    <button type="button" class="btn btn-default character selectClass">请选择班级</button>
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="caret"></span>
-                        <span class="sr-only">Toggle Dropdown</span>
-                    </button>
-                    <ul class="dropdown-menu quDo">
-                        <!-- Dropdown menu links -->
-
-
-                    </ul>
-                </div>
             </div>
             <div id="option">
                 <div class="button blue-button attach">确认</div>
@@ -153,7 +150,7 @@
 
 <script>
     $(function(){
-        var currentClassId, currentGrade, currentClass, classList
+        var currentClassId, equipmentMacAddress, equipmentList, equipmentId
         $(window).load(function(){
             // var currentClassId
             // $('body').css('height' , $(window).height());
@@ -223,7 +220,7 @@
                                 str +="<td>"+correctArray[i].grade_name+"</td>";
                                 str +="<td>"+correctArray[i].class_name+"</td>";
                                 str +="<td>"+correctArray[i].equipment_data.mac_address+"</td>";
-                                str +="<td><div class='del-data bd classOprationBtn " + status_1 + "' id='bdBtn" + (i+1) +"' >" + bd_1 + "</div>";
+                                str +="<td><div class='del-data bd classOprationBtn " + status_1 + "' id='bdBtn" + (i+1) +"' data-classid='" + correctArray[i].class_id + "'>" + bd_1 + " </div>";
                                 str +="<div class='del-data delBtn classDelBtn' id='delBtn" + (i+1) + "' data-classid='" + correctArray[i].class_id + "'>删除</div>";
                                 str +="</td></tr>";
                                 $(".tb").append(str);  
@@ -376,33 +373,31 @@
             
         });
 
-        $(document).on("click", ".bd_op", function() {
+        $(document).on("click", ".bd_op", function(e) {
             $('#attach_classroom').css('left' , ($(window).width() - $('#add_teacher').outerWidth())/2 );
             $('#attach_classroom').css('top' , ($(window).height() - $('#add_teacher').outerHeight())/2 );
             $('#attach_classroom').css('display', 'block');
             $('.hover').css('display', 'block');
+            $('.sizeMark').html('请选择设备MAC地址')
+            currentClassId = e.currentTarget.dataset.classid
             $.ajax({
 
                 type: "GET",
 
-                url: config.local + '/manager/v1/classroom/available',
+                url: config.local + '/manager/v1/equipment/available',
 
                 // dataType: "json",//返回json,text,html你自己定
 
                 success: function(res){//成
                     if(res.status == 200){
-                        $(".doQuContent").remove();
+                        $(".pilularContent").remove();
                         // $(".quDo").remove();
                         let correctArray = res.data // 正确的返回值格式，把你外面套的那层数组去掉之后就可以把这行删掉，把循环里的correctArray改成res.data
-                        classList = res.data
+                        equipmentList = res.data
                         for (let i=0; i<correctArray.length; i++) {
-                            str ="<li class='doQuContent'><a class='gradeChooseBtn'>" + correctArray[i].grade_name + "</a></li>"
+                            str ="<li class='pilularContent'><a class='gradeChooseBtn' data-id='" + equipmentList[i].equipment_id + "'>" + correctArray[i].mac_address + "</a></li>"
                             $(".doQu").append(str);  
                         }
-
-                        currentClass, currentGrade = null
-                        $('.selectGrade').html('请选择年级')
-                        $('.selectClass').html('请选择班级')
                         
                     } else if (res.status == 401) {
                         alert(res.error)
@@ -418,27 +413,13 @@
         });
 
         $(document).on("click", ".gradeChooseBtn", function(e) {
-            currentGrade = this.innerText
+            equipmentMacAddress = this.innerText
+            equipmentId = e.currentTarget.dataset.id    
             $(".classChooseBtn").remove();
             
-            for (let i = 0; i < classList.length; i++) {
-                if (classList[i].grade_name == currentGrade) {
-                    for (let x = 0; x < classList[i].grade_class.length; x++) {
-                        str ="<li class='doQuContent'><a class='classChooseBtn'>" + classList[i].grade_class[x].class_name + "</a></li>"
-                        $(".quDo").append(str);  
-                    }
-                }   
-            }
-
-            $('.selectGrade').html(currentGrade)
+            $('.sizeMark').html(equipmentMacAddress)
         })
 
-        $(document).on("click", ".classChooseBtn", function(e) {
-            currentClass = this.innerText        
-
-            $('.selectClass').html(currentClass)
-        })
-        
         $('#add_2').on('click', function(){
             $('#batch_add').css('left' , ($(window).width() - $('#batch_add').outerWidth())/2 );
             $('#batch_add').css('top' , ($(window).height() - $('#batch_add').outerHeight())/2 );
@@ -447,6 +428,7 @@
             $('.hover').css('display', 'block');
             
         });
+
 
         $(document).on("click", ".delBtn", function(e) {
             currentClassId = e.currentTarget.dataset.classid;
@@ -457,6 +439,67 @@
             
         });
 
+        $('.attach').on('click', function(){
+            if (equipmentMacAddress == null){
+                alert('请选择设备MAC地址')
+                return
+            }
+
+            $.ajax({
+
+                type: "post",
+
+                url: config.local + '/manager/v1/equipment/' + equipmentId +'/attach_classroom',
+                data: {
+                    "class_id": currentClassId,
+                },
+                dataType: "json",//返回json,text,html你自己定
+                
+                success: function(res){//成功
+                    if(res.status == 200){
+                        alert("绑定成功")
+                        location.href = 'class.html';
+                    } else if (res.status == 401) {
+                        alert(res.error)
+                        location.href = 'login.html';
+                    } else {
+                        alert(res.error)
+                    }
+                }
+            })
+
+        })
+    $('.detachSave').on('click', function(e){
+        $.ajax({
+
+            type: "post",
+
+            url: config.local + '/manager/v1/classroom/' + currentClassId +'/detach_equipment',
+
+            dataType: "json",//返回json,text,html你自己定
+
+            success: function(res){//成功
+                if(res.status == 200){
+                    alert("解绑成功")
+                    location.href = 'class.html';
+                } else if (res.status == 401) {
+                    alert(res.error)
+                    location.href = 'login.html';
+                } else {
+                    alert(res.error)
+                }
+            }
+        })
+    })
+
+    $(document).on("click", ".jb_op", function(e) {
+        $('.detach_window').css('left' , ($(window).width() - $('#add_teacher').outerWidth())/2 );
+        $('.detach_window').css('top' , ($(window).height() - $('#add_teacher').outerHeight())/2 );
+        $('.detach_window').css('display', 'block');
+        $('.hover').css('display', 'block');
+        currentClassId = e.currentTarget.dataset.classid
+         
+    });
 
 
         $('#upo9').on('mouseover', function(){
@@ -482,60 +525,16 @@
             $('.del_window').css('display', 'none');
             $('#batch_add').css('display', 'none');
             $('.hover').css('display', 'none');
+            $('.detach_window').css('display', 'none');
         });
         $('.cannel').on('click', function(){
             $('#add_teacher').css('display', 'none');
             $('#attach_classroom').css('display', 'none');
             $('.del_window').css('display', 'none');
             $('.hover').css('display', 'none');
+            $('.detach_window').css('display', 'none');
             
         });
-
-
-    $('.attach').on('click', function(){
-            if (currentClass == null){
-                alert('请输入年级！')
-                return
-            }
-            if (currentGrade == null){
-                alert('请输入年级！')
-                return
-            }
-            debugger
-            console.log('add')
-            if(gradeName == ''){
-                alert('请输入年级！')
-                return
-            }
-            if(className == ''){
-                alert('请输入班级！')
-                return
-            }
-            
-            console.log('jump')
-            $.ajax({
-
-                type: "post",
-
-                url: config.local + '/manager/v1/equipment/' + equipmentId +'/attach_classroom',
-                data: {
-                    "class_id": classId,
-                },
-                dataType: "json",//返回json,text,html你自己定
-                
-                success: function(res){//成功
-                    if(res.status == 200){
-                        location.href = 'class.html';
-                    } else if (res.status == 401) {
-                        alert(res.error)
-                        location.href = 'login.html';
-                    } else {
-                        alert(res.error)
-                    }
-                }
-            })
-
-    })
 
         $('.save').on('click', function(){
             console.log('add')

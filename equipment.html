@@ -82,7 +82,7 @@
             </div>
             <p></p>
             <div id="option">
-                <div class="button blue-button delSave">确认</div>
+                <div class="button blue-button detachSave">确认</div>
                 <div class="button blue-button cannel">取消</div>
             </div>
         </div>
@@ -334,7 +334,6 @@ $(function(){
         $('.detach_window').css('top' , ($(window).height() - $('#add_teacher').outerHeight())/2 );
         $('.detach_window').css('display', 'block');
         $('.hover').css('display', 'block');
-        debugger
         equipmentId = e.currentTarget.dataset.id
         $.ajax({
 
@@ -489,40 +488,64 @@ $(function(){
     });
 
     $('.attach').on('click', function(){
-            if (currentClass == null){
-                alert('请输入年级！')
-                return
-            }
-            if (currentGrade == null){
-                alert('请输入年级！')
-                return
-            }
-            $.ajax({
+        if (currentClass == null){
+            alert('请输入年级！')
+            return
+        }
+        if (currentGrade == null){
+            alert('请输入年级！')
+            return
+        }
+        $.ajax({
 
-                type: "post",
+            type: "post",
 
-                url: config.local + '/manager/v1/equipment/' + equipmentId +'/attach_classroom',
-                data: {
-                    "class_id": currentClassId,
-                },
-                dataType: "json",//返回json,text,html你自己定
-                
-                success: function(res){//成功
-                    if(res.status == 200){
-                        location.href = 'equipment.html';
-                    } else if (res.status == 401) {
-                        alert(res.error)
-                        location.href = 'login.html';
-                    } else {
-                        alert(res.error)
-                    }
+            url: config.local + '/manager/v1/equipment/' + equipmentId +'/attach_classroom',
+            data: {
+                "class_id": currentClassId,
+            },
+            dataType: "json",//返回json,text,html你自己定
+            
+            success: function(res){//成功
+                if(res.status == 200){
+                    alert("绑定成功")
+                    location.href = 'equipment.html';
+                } else if (res.status == 401) {
+                    alert(res.error)
+                    location.href = 'login.html';
+                } else {
+                    alert(res.error)
                 }
-            })
+            }
+        })
 
     })
+    
+    $('.detachSave').on('click', function(e){
+        $.ajax({
+
+            type: "post",
+
+            url: config.local + '/manager/v1/equipment/' + equipmentId +'/detach_classroom',
+
+            dataType: "json",//返回json,text,html你自己定
+
+            success: function(res){//成功
+                if(res.status == 200){
+                    alert("解绑成功")
+                    location.href = 'equipment.html';
+                } else if (res.status == 401) {
+                    alert(res.error)
+                    location.href = 'login.html';
+                } else {
+                    alert(res.error)
+                }
+            }
+        })
+    })
+    
 
     $('.save').on('click', function(){
-        console.log('add')
         var gradeName = $('#grade_name').val();
 		var className = $('#class_name').val();
 		console.log(2111)

@@ -225,8 +225,17 @@ td {
     margin-left: 100px;
 }
 
+.equipmentUp{
+    margin-top: 30px;
+    margin-left: 170px;
+}
+
 .character{
     width: 222px;
+}
+
+.sizeMark{
+    width: 334px;
 }
 
 #attach_classroom{ 
@@ -389,6 +398,19 @@ td {
     padding: 4px 25px 4px 25px;
 }
 
+.jurisdiction {
+    width: 127px !important;
+    height: 35px;
+    padding: 4px 25px 4px 25px;
+}
+
+.jurisdiction:hover {
+    width: 127px !important;
+    height: 35px;
+    padding: 4px 25px 4px 25px;
+}
+
+
 .classDelBtn {
     width: 102px !important;
     height: 35px !important;
@@ -422,3 +444,4 @@ td {
     z-index: 9999;
     text-align: center;
 }
+
